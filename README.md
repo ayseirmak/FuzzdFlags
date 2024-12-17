@@ -1,5 +1,5 @@
 # FloatingPoint_and_CompilerTesting_Coverage
-####  Install Docker on Ubuntu (ARM64)
+###  Step1 - Install Docker on Ubuntu (ARM64) 🚀 
 
 **Update Package Index**   
 sudo apt-get update
@@ -27,3 +27,21 @@ sudo apt-get install -y docker-ce docker-ce-cli containerd.io
 **Verify Docker Installation**   
 sudo docker --version  
 Docker version 27.4.0, build bde2b89
+
+###  Step2 - Create Dockerfile
+mkdir docker_project  
+cd docker_project  
+create your dockerfile  
+**NOTE: On Ubuntu 22.04 (Jammy), the gcov binary is included with the gcc package. Therefore, you don’t need to install gcov-11 separately.**
+
+### Step 3 - Build the Docker Image 🏗️ 
+docker build -t afl-clang-env .  
+docker images  
+<img width="794" alt="image" src="https://github.com/user-attachments/assets/066d521a-8276-4228-843f-b124bb190f46" />  
+docker run -it --name afl-clang-container afl-clang-env
+<img width="954" alt="image" src="https://github.com/user-attachments/assets/006319a0-25af-4761-8c5e-46d7ab6f7919" />
+
+
+
+
+
