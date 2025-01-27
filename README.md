@@ -41,6 +41,14 @@ docker images
 docker run -it --name afl-clang-container afl-clang-env
 <img width="954" alt="image" src="https://github.com/user-attachments/assets/006319a0-25af-4761-8c5e-46d7ab6f7919" />
 
+### Step 5 - Start and Connect Docker Image
+docker start <container-name-or-id> 
+docker exec -it <container-name-or-id> /bin/bash
+
+### Step 5 - Modify Docker Image
+docker commit <container-id> <new-image-name>
+sudo docker commit afl-clang-container afl-clang-env:modified-clang2-driver 
+
 
 
 
