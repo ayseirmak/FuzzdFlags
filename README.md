@@ -1,4 +1,4 @@
-# FloatingPoint_and_CompilerTesting_Coverage
+# ISSTA_2025_Tool
 ###  Step1 - Install Docker on Ubuntu (ARM64) 🚀 
 
 **Update Package Index**   
