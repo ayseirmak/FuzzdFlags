@@ -58,7 +58,7 @@ AFL_DEBUG=1 AFL_USE_ASAN=0 AFL_PRINT_FILENAMES=1 AFL_DEBUG_CHILD_OUTPUT=1 afl-cm
 AFL_DEBUG=1 AFL_USE_ASAN=0 AFL_DEBUG_CHILD_OUTPUT=1 AFL_SHUFFLE_QUEUE=1 AFL_I_DONT_CARE_ABOUT_MISSING_CRASHES=1 \ 
 afl-fuzz -i /users/user42/input-seeds -m none -t 2000 -T 10 -o /users/user42/output-afl \ -- /users/user42/build-test/bin/clang-options --filebin @@
 
-./24_fuzz.sh /users/a_irmak/input_seeds /users/a_irmak/output-fuzz 1 exp2 /users/a_irmak/build/bin/clang-options
+./24_fuzz.sh /users/user42/input_seeds /users/user42/output-fuzz 1 exp2 /users/user42/build-test/bin/clang-options
 
 
 
