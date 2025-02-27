@@ -63,6 +63,7 @@ sudo apt-get install -y \
   binutils-dev \
   libiberty-dev
 
+
 # ------------------------------------------
 # Step 2: Add Toolchain PPA & install GCC-11
 # ------------------------------------------
@@ -85,30 +86,22 @@ sudo ln -s /usr/bin/gcov-11 /usr/bin/gcov
 # -------------------------------------------------------
 # Step 4: Download & install LLVM 14 (for system clang)
 # -------------------------------------------------------
-wget https://apt.llvm.org/llvm.sh
-sudo chmod +x llvm.sh
-sudo ./llvm.sh 14
-sudo apt-get install -y llvm-14-dev
-
-
-# Set LLVM 14 as the default LLVM/Clang (if desired)
-sudo update-alternatives --install /usr/bin/clang clang /usr/bin/clang-14 1400 \
-  --slave /usr/bin/clang++ clang++ /usr/bin/clang++-14
-sudo update-alternatives --install /usr/bin/llvm-config llvm-config /usr/bin/llvm-config-14 1400
-
-export LLVM_CONFIG=/usr/bin/llvm-config-14
+sudo bash -c "$(wget -O - https://apt.llvm.org/llvm.sh)"
+sudo apt-get install -y clang-14 lldb-14 lld-14
+sudo ln -s /usr/bin/llvm-config-14 /usr/bin/llvm-config
+export LLVM_CONFIG=/usr/bin/llvm-config
 
 # -------------------------------------------------------
 # Step 5: Install AFL++ from source
 # -------------------------------------------------------
-git clone https://github.com/AFLplusplus/AFLplusplus.git
-cd AFLplusplus
-
-# Checkout a specific commit (optional)
-git checkout f596a297c4de6a5e1a6fb9fbb3b4e18124a24f58
+git clone https://github.com/karineek/SearchGEM5.git 
+git clone https://github.com/AFLplusplus/AFLplusplus.git 
+cd AFLplusplus 
+git checkout f596a297c4de6a5e1a6fb9fbb3b4e18124a24f58 
+cp ../SearchGEM5/src/gem5-afl/afl-fuzz-init.c src/afl-fuzz-init.c 
+AFL_USE_ASAN=0 make 
 
 # Build AFL++ (disable ASAN via AFL_USE_ASAN=0 for performance/simplicity)
-AFL_USE_ASAN=0 make
 sudo make install
 
 # -------------------------------------------------------
@@ -139,6 +132,14 @@ export CXX=/usr/local/bin/afl-clang-fast++
 
 sudo chown -R user42:user42 /users/user42/
 chmod -R u+w /users/user42/
+
+# -------------------------------------------------------
+# Step 10: Final Cleanup
+# -------------------------------------------------------
+sudo apt -y autoremove
+sudo apt-get clean
+
+echo "All setup complete! Run: su - user42"
 
 # -------------------------------------------------------
 # Step 10: Download & build LLVM 17 with AFL compiler
