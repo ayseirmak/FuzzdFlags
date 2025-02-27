@@ -91,7 +91,7 @@ sudo ./llvm.sh 14
 sudo apt-get install -y llvm-14-dev
 
 
-# Set LLVM 14 as the default LLVM/Clang
+# Set LLVM 14 as the default LLVM/Clang (if desired)
 sudo update-alternatives --install /usr/bin/clang clang /usr/bin/clang-14 1400 \
   --slave /usr/bin/clang++ clang++ /usr/bin/clang++-14
 sudo update-alternatives --install /usr/bin/llvm-config llvm-config /usr/bin/llvm-config-14 1400
@@ -115,11 +115,12 @@ sudo make install
 # Step 6: Configure Swap Space (4GB)
 # -------------------------------------------------------
 cd /users/user42
-sudo fallocate -l 4G swapfile
-sudo chmod 600 swapfile
-sudo mkswap swapfile
-sudo swapon swapfile
-sudo swapon --show
+sudo dd if=/dev/zero of=/swapfile bs=1G count=8
+sudo chmod 600 /swapfile
+sudo mkswap /swapfile
+sudo swapon /swapfile
+free -h
+
 
 # -------------------------------------------------------
 # Step 7: Set Up Core Dump Handling
@@ -174,3 +175,15 @@ ninja clang
 cd ~
 wget https://github.com/ayseirmak/ISSTA_2025_Tool/raw/refs/heads/main/cmin-input-output/llvmSS-reindex-cfiles.tar.gz
 tar -zxvf llvmSS-reindex-cfiles.tar.gz
+
+
+
+# -------------------------------------------------------
+# All done!
+# -------------------------------------------------------
+
+AFL_DEBUG=1 AFL_USE_ASAN=0 AFL_PRINT_FILENAMES=1 AFL_DEBUG_CHILD_OUTPUT=1 afl-cmin -i /users/user42/llvmSS-before-Cmin-cfiles -o /users/user42/output-Cmin2 -m none -t 500 -T 12 -- /users/user42/build-test/bin/clang -x c -c -O3 -fpermissive -w -Wno-implicit-function-declaration -Wno-implicit-int -Wno-return-type -Wno-builtin-redeclared -Wno-int-conversion  -target x86_64-linux-gnu -march=native -I/usr/include -I/users/user42/llvmSS-include @@ -o /dev/null 2>&1 | tee /users/user42/afl-cmin-errors.log
+
+cd /sys/devices/system/cpu
+sudo echo performance | sudo tee cpu*/cpufreq/scaling_governor
+./multi_round_fuzz.sh /users/user42/llvmSS-reindex-cfiles /users/user42/output-fuzz exp1 /users/user42/build-test/bin/clang
