@@ -33,7 +33,7 @@ ls -l /users/user42/llvmSS-before-Cmin_cfiles
 
 tar -czvf /users/user42/llvmSS-after-Cmin.tar.gz -C /users/user42 llvmSS-after-Cmin_cfiles llvmSS-after-Cmin_headers
 
-Token: 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
+Token: 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
 cat ~/.bash_history
 
 AFL_DEBUG=1 AFL_USE_ASAN=0 AFL_PRINT_FILENAMES=1 AFL_DEBUG_CHILD_OUTPUT=1 afl-cmin -i /users/user42/llvmSS-before-Cmin -o /users/user42/output-Cmin \
