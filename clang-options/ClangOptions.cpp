@@ -226,7 +226,7 @@ std::string generateTestFileName(const std::vector<uint8_t> &data) {
     rawValue |= static_cast<uint16_t>(data[1]) << 8;
 
     // 2,505 .c files → mod 2,505
-    uint16_t fileIndex = rawValue % 1764;
+    uint16_t fileIndex = rawValue % 1706;
 
     // Construct filename (e.g. test_1234.c)
     char buffer[32];
