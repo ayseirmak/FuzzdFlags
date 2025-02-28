@@ -47,6 +47,9 @@ screen -dmS fuzz_session_exp1 ./multi_round_fuzz.sh /users/user42/llvmSS-reindex
 # Reattach if you want to see the console output: screen -r fuzz_session_exp1 / Return: Ctrl+A, then D
 # To kill: screen -S fuzz_session_exp1 -X quit
 
+#exp2 version
+screen -dmS fuzz_session_exp2 ./multi_round_fuzz.sh /users/user42/input-seeds/ users/user42/output-fuzz exp2 /users/user42/build-test/bin/clang-options
+
 # ---------------------------------------------------------------------------------------------------------------------------------------------------------------------
 # Inside run_AFL_conf_1.sh
 # AFL_DEBUG=1 AFL_USE_ASAN=0 AFL_DEBUG_CHILD_OUTPUT=1 AFL_SHUFFLE_QUEUE=1 AFL_I_DONT_CARE_ABOUT_MISSING_CRASHES=1 \
