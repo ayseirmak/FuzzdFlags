@@ -42,13 +42,13 @@ cd /sys/devices/system/cpu
 sudo echo performance | sudo tee cpu*/cpufreq/scaling_governor
 cd ~ 
 
-screen -dmS fuzz_session_exp1 ./multi_round_fuzz.sh /users/user42/llvmSS-reindex-cfiles /users/user42/output-fuzz exp1 /users/user42/build-test/bin/clang
+screen -dmS fuzz_session_exp1_noDB ./multi_round_fuzz.sh /users/user42/llvmSS-reindex-cfiles /users/user42/output-fuzz exp1 /users/user42/build-test/bin/clang
 # Check if it’s running: screen -ls
 # Reattach if you want to see the console output: screen -r fuzz_session_exp1 / Return: Ctrl+A, then D
 # To kill: screen -S fuzz_session_exp1 -X quit
 
 #exp2 version
-screen -dmS fuzz_session_exp2 ./multi_round_fuzz.sh /users/user42/input-seeds/ users/user42/output-fuzz exp2 /users/user42/build-test/bin/clang-options
+screen -dmS fuzz_session_exp2 ./multi_round_fuzz.sh /users/user42/input-seeds /users/user42/output-fuzz exp2 /users/user42/build-test/bin/clang-options
 
 # ---------------------------------------------------------------------------------------------------------------------------------------------------------------------
 # Inside run_AFL_conf_1.sh
