@@ -1,0 +1,334 @@
+=== Fuzzing Summary ===
+Total queue entries: 27
+No crashes or hangs were detected.
+
+=== Queue Analysis (Source/Flags) ===
+
+=== Source File Frequency (Entire Queue) ===
+/users/user42/rename-llvmSS-after-Cmin/test_100.c : 5
+/users/user42/rename-llvmSS-after-Cmin/test_101.c : 1
+/users/user42/rename-llvmSS-after-Cmin/test_102.c : 1
+/users/user42/rename-llvmSS-after-Cmin/test_108.c : 1
+/users/user42/rename-llvmSS-after-Cmin/test_1139.c : 1
+/users/user42/rename-llvmSS-after-Cmin/test_1154.c : 1
+/users/user42/rename-llvmSS-after-Cmin/test_116.c : 1
+/users/user42/rename-llvmSS-after-Cmin/test_1250.c : 1
+/users/user42/rename-llvmSS-after-Cmin/test_1395.c : 1
+/users/user42/rename-llvmSS-after-Cmin/test_169.c : 1
+/users/user42/rename-llvmSS-after-Cmin/test_228.c : 1
+/users/user42/rename-llvmSS-after-Cmin/test_235.c : 1
+/users/user42/rename-llvmSS-after-Cmin/test_273.c : 1
+/users/user42/rename-llvmSS-after-Cmin/test_326.c : 2
+/users/user42/rename-llvmSS-after-Cmin/test_36.c : 1
+/users/user42/rename-llvmSS-after-Cmin/test_459.c : 1
+/users/user42/rename-llvmSS-after-Cmin/test_473.c : 1
+/users/user42/rename-llvmSS-after-Cmin/test_68.c : 1
+/users/user42/rename-llvmSS-after-Cmin/test_686.c : 1
+/users/user42/rename-llvmSS-after-Cmin/test_740.c : 1
+/users/user42/rename-llvmSS-after-Cmin/test_96.c : 1
+
+=== Mutated Flags Frequency (Entire Queue) ===
+-O1 : 1
+-Ofast : 1
+-Os : 1
+-Oz : 18
+-fPIC : 1
+-fPIE : 2
+-faccess-control : 2
+-faddrsig : 1
+-falign-functions : 3
+-faligned-allocation : 1
+-fallow-unsupported : 1
+-fasm : 1
+-fassociative-math : 2
+-fassume-sane-operator-new : 1
+-fast : 2
+-fblocks : 1
+-fdenormal-fp-math=ieee : 1
+-fexcess-precision=16 : 1
+-fexcess-precision=fast : 3
+-fexcess-precision=standard : 1
+-ffast-math : 1
+-ffinite-math-only : 1
+-ffixed-point : 3
+-ffp-contract=fast : 1
+-ffp-contract=off : 1
+-ffp-eval-method=double : 1
+-ffp-eval-method=extended : 1
+-ffp-exception-behavior=ignore : 3
+-ffp-exception-behavior=maytrap : 2
+-ffp-exception-behavior=strict : 1
+-ffp-model=fast : 1
+-ffp-model=precise : 3
+-ffp-model=strict : 2
+-ffunction-sections : 1
+-fhonor-nans : 2
+-flax-vector-conversions : 2
+-flax-vector-conversions=integer : 2
+-fno-PIE : 16
+-fno-access-control : 1
+-fno-align-functions : 1
+-fno-approx-func : 2
+-fno-asm : 1
+-fno-asm-blocks : 1
+-fno-associative-math : 1
+-fno-assume-sane-operator-new : 1
+-fno-finite-loops : 17
+-fno-honor-infinities : 1
+-fno-honor-nans : 1
+-fno-protect-parens : 2
+-fno-signed-char : 2
+-fno-signed-zeros : 16
+-fno-sized-deallocation : 2
+-fno-stack-size-section : 1
+-fno-strict-aliasing : 2
+-fno-strict-enums : 1
+-fno-strict-overflow : 1
+-fno-strict-return : 2
+-fno-unroll-loops : 1
+-fno-unsigned-char : 1
+-fno-vectorize : 2
+-fno-wrapv : 1
+-fprotect-parens : 2
+-freciprocal-math : 1
+-fsized-deallocation : 2
+-fstack-protector-strong : 1
+-fstack-size-section : 1
+-fstrict-aliasing : 1
+-fstrict-enums : 2
+-fstrict-float-cast-overflow : 1
+-ftrapping-math : 1
+-ftree-vectorize : 2
+-funified-lto : 1
+-funique-section-names : 1
+-funroll-loops : 1
+-funsafe-math-optimizations : 1
+-funsigned-char : 4
+
+=== Seed Analysis ===
+Found 10 seed file(s) in the queue.
+
+Seed Name: seed1.bin
+  Source File: /users/user42/rename-llvmSS-after-Cmin/test_326.c
+  Mutated Flags (15):
+    -falign-functions
+    -fexcess-precision=fast
+    -ffp-exception-behavior=maytrap
+    -ffp-exception-behavior=strict
+    -ffp-model=precise
+    -ffunction-sections
+    -fhonor-nans
+    -flax-vector-conversions
+    -flax-vector-conversions=integer
+    -fno-sized-deallocation
+    -fno-strict-enums
+    -fno-strict-overflow
+    -fno-strict-return
+    -fno-vectorize
+    -fsized-deallocation
+
+Seed Name: seed10.bin
+  Source File: /users/user42/rename-llvmSS-after-Cmin/test_740.c
+  Mutated Flags (12):
+    -Os
+    -Oz
+    -fassociative-math
+    -fast
+    -fdenormal-fp-math=ieee
+    -ffixed-point
+    -flax-vector-conversions
+    -fno-approx-func
+    -fno-unroll-loops
+    -freciprocal-math
+    -fstack-protector-strong
+    -funsigned-char
+
+Seed Name: seed2.bin
+  Source File: /users/user42/rename-llvmSS-after-Cmin/test_100.c
+  Mutated Flags (4):
+    -Oz
+    -fno-PIE
+    -fno-finite-loops
+    -fno-signed-zeros
+
+Seed Name: seed3.bin
+  Source File: /users/user42/rename-llvmSS-after-Cmin/test_1395.c
+  Mutated Flags (8):
+    -Oz
+    -fasm
+    -ffp-exception-behavior=ignore
+    -fno-protect-parens
+    -fstrict-aliasing
+    -fstrict-enums
+    -fstrict-float-cast-overflow
+    -funsigned-char
+
+Seed Name: seed4.bin
+  Source File: /users/user42/rename-llvmSS-after-Cmin/test_326.c
+  Mutated Flags (12):
+    -falign-functions
+    -fexcess-precision=fast
+    -ffp-exception-behavior=maytrap
+    -ffp-model=fast
+    -ffp-model=precise
+    -ffp-model=strict
+    -flax-vector-conversions=integer
+    -fno-approx-func
+    -fno-asm-blocks
+    -fno-sized-deallocation
+    -fno-vectorize
+    -fsized-deallocation
+
+Seed Name: seed5.bin
+  Source File: /users/user42/rename-llvmSS-after-Cmin/test_235.c
+  Mutated Flags (4):
+    -fassociative-math
+    -ffinite-math-only
+    -fno-assume-sane-operator-new
+    -funsigned-char
+
+Seed Name: seed6.bin
+  Source File: /users/user42/rename-llvmSS-after-Cmin/test_686.c
+  Mutated Flags (14):
+    -fPIE
+    -faccess-control
+    -faddrsig
+    -fallow-unsupported
+    -fast
+    -fexcess-precision=standard
+    -ffp-contract=fast
+    -ffp-exception-behavior=ignore
+    -ffp-model=strict
+    -fno-asm
+    -fno-stack-size-section
+    -fno-strict-aliasing
+    -fprotect-parens
+    -ftree-vectorize
+
+Seed Name: seed7.bin
+  Source File: /users/user42/rename-llvmSS-after-Cmin/test_1250.c
+  Mutated Flags (18):
+    -fPIC
+    -faccess-control
+    -falign-functions
+    -fassume-sane-operator-new
+    -fexcess-precision=16
+    -fexcess-precision=fast
+    -ffixed-point
+    -ffp-eval-method=double
+    -ffp-model=precise
+    -fno-access-control
+    -fno-align-functions
+    -fno-honor-infinities
+    -fno-protect-parens
+    -fno-strict-aliasing
+    -fno-unsigned-char
+    -fstrict-enums
+    -ftrapping-math
+    -funsigned-char
+
+Seed Name: seed8.bin
+  Source File: /users/user42/rename-llvmSS-after-Cmin/test_459.c
+  Mutated Flags (10):
+    -Ofast
+    -fblocks
+    -ffp-exception-behavior=ignore
+    -fno-associative-math
+    -fno-signed-char
+    -fno-strict-return
+    -fstack-size-section
+    -funique-section-names
+    -funroll-loops
+    -funsafe-math-optimizations
+
+Seed Name: seed9.bin
+  Source File: /users/user42/rename-llvmSS-after-Cmin/test_273.c
+  Mutated Flags (11):
+    -fPIE
+    -ffast-math
+    -ffixed-point
+    -ffp-contract=off
+    -fhonor-nans
+    -fno-finite-loops
+    -fno-honor-nans
+    -fno-wrapv
+    -fprotect-parens
+    -ftree-vectorize
+    -funified-lto
+
+-- Seed Flags Frequency --
+-Ofast : 1
+-Os : 1
+-Oz : 3
+-fPIC : 1
+-fPIE : 2
+-faccess-control : 2
+-faddrsig : 1
+-falign-functions : 3
+-fallow-unsupported : 1
+-fasm : 1
+-fassociative-math : 2
+-fassume-sane-operator-new : 1
+-fast : 2
+-fblocks : 1
+-fdenormal-fp-math=ieee : 1
+-fexcess-precision=16 : 1
+-fexcess-precision=fast : 3
+-fexcess-precision=standard : 1
+-ffast-math : 1
+-ffinite-math-only : 1
+-ffixed-point : 3
+-ffp-contract=fast : 1
+-ffp-contract=off : 1
+-ffp-eval-method=double : 1
+-ffp-exception-behavior=ignore : 3
+-ffp-exception-behavior=maytrap : 2
+-ffp-exception-behavior=strict : 1
+-ffp-model=fast : 1
+-ffp-model=precise : 3
+-ffp-model=strict : 2
+-ffunction-sections : 1
+-fhonor-nans : 2
+-flax-vector-conversions : 2
+-flax-vector-conversions=integer : 2
+-fno-PIE : 1
+-fno-access-control : 1
+-fno-align-functions : 1
+-fno-approx-func : 2
+-fno-asm : 1
+-fno-asm-blocks : 1
+-fno-associative-math : 1
+-fno-assume-sane-operator-new : 1
+-fno-finite-loops : 2
+-fno-honor-infinities : 1
+-fno-honor-nans : 1
+-fno-protect-parens : 2
+-fno-signed-char : 1
+-fno-signed-zeros : 1
+-fno-sized-deallocation : 2
+-fno-stack-size-section : 1
+-fno-strict-aliasing : 2
+-fno-strict-enums : 1
+-fno-strict-overflow : 1
+-fno-strict-return : 2
+-fno-unroll-loops : 1
+-fno-unsigned-char : 1
+-fno-vectorize : 2
+-fno-wrapv : 1
+-fprotect-parens : 2
+-freciprocal-math : 1
+-fsized-deallocation : 2
+-fstack-protector-strong : 1
+-fstack-size-section : 1
+-fstrict-aliasing : 1
+-fstrict-enums : 2
+-fstrict-float-cast-overflow : 1
+-ftrapping-math : 1
+-ftree-vectorize : 2
+-funified-lto : 1
+-funique-section-names : 1
+-funroll-loops : 1
+-funsafe-math-optimizations : 1
+-funsigned-char : 4
+
+Enhanced fuzz report generated at /users/user42/fuzz_report.txt
