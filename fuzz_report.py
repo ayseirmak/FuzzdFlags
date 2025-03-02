@@ -15,6 +15,9 @@ def main():
     hang_dir = os.path.join(output_dir, "hangs")
     queue_dir = os.path.join(output_dir, "queue")
     report_file ="/users/user42/fuzz_report.txt"
+    fuzzer_stats_path = os.path.join(output_dir, "fuzzer_stats")
+
+    fstats = parse_fuzzer_stats(fuzzer_stats_path)
 
     # 1) Count queue, crashes, hangs
     crash_count = count_non_readme_files(crash_dir)
@@ -22,9 +25,10 @@ def main():
     queue_count = count_non_readme_files(queue_dir)
 
     with open(report_file, "w") as rep:
-        rep.write("=== Fuzzing Summary ===\n")
+        rep.write("# ===============================================================================================\n")
+        rep.write("#                                        Fuzzing Summary\n")
+        rep.write("# ===============================================================================================\n")
         rep.write(f"Total queue entries: {queue_count}\n")
-
         if crash_count == 0 and hang_count == 0:
             rep.write("No crashes or hangs were detected.\n")
         else:
@@ -45,12 +49,47 @@ def main():
                     rep.write(f"{fname}\n")
             else:
                 rep.write("No hang files.\n")
+        
+        # Print the "Fuzzing Analysis" from fuzzer_stats
+        rep.write("# ===============================================================================================\n")
+        rep.write("#                                       Fuzzing Statistics\n")
+        rep.write("# ===============================================================================================\n")
+        rep.write(f"Total queue entries: {queue_count}\n")
 
-        # 2) Analyze queue for:
+        if not fstats:
+            rep.write("No fuzzer_stats file found or it was empty.\n")
+        else:
+            # Basic Execution and Timing
+            rep.write("Basic Execution and Timing\n")
+            rep.write(f"run_time      : {fstats.get('run_time', 'N/A')}\n")
+            rep.write(f"execs_done    : {fstats.get('execs_done', 'N/A')}\n")
+            rep.write(f"execs_per_sec : {fstats.get('execs_per_sec', 'N/A')}\n\n")
+
+            # Corpus & Testcase Counts
+            rep.write("Corpus & Testcase Counts\n")
+            rep.write(f"corpus_count  : {fstats.get('corpus_count', 'N/A')}\n")
+            rep.write(f"pending_total : {fstats.get('pending_total', 'N/A')}\n")
+            rep.write(f"**max_depth   : {fstats.get('max_depth', 'N/A')}\n\n")
+
+            # Coverage Indicators
+            rep.write("Coverage Indicators\n")
+            rep.write(f"**bitmap_cvg  : {fstats.get('bitmap_cvg', 'N/A')}\n")
+            rep.write(f"edges_found   : {fstats.get('edges_found', 'N/A')}\n")
+            rep.write(f"total_edges   : {fstats.get('total_edges', 'N/A')}\n\n")
+
+            # Variation or var_byte_count
+            rep.write("Variation\n")
+            rep.write(f"**var_byte_count: {fstats.get('var_byte_count', 'N/A')}\n")
+
+
+
+        # Analyze queue for:
         #    - Source File Frequency
         #    - Mutated Flags Frequency
         #    - Seed Analysis
-        rep.write("\n=== Queue Analysis (Source/Flags) ===\n")
+        rep.write("# ===============================================================================================\n")
+        rep.write("#                           Queue Analysis - Source & Flag Frequensies \n")
+        rep.write("# ===============================================================================================\n")
 
         # The "fixed" flags that clang-options always includes, which we don't count as mutated.
         # Make sure these match exactly what appears in --checker output for your environment.
@@ -130,22 +169,25 @@ def main():
                         seed_flag_count[mfl] = seed_flag_count.get(mfl, 0) + 1
 
         # 3) Print the 2 "tables" for the entire queue
-        rep.write("\n=== Source File Frequency (Entire Queue) ===\n")
+        rep.write("=== Source File Frequency (Entire Queue) ===\n")
         if not file_name_count:
             rep.write("No queue entries or no valid source files found in the queue.\n")
         else:
+            max_len_sf = max(len(sf) for sf in file_name_count)
             for sf, count_val in sorted(file_name_count.items()):
-                rep.write(f"{sf} : {count_val}\n")
-
+                rep.write(f"{sf.ljust(max_len_sf)} : {count_val}\n")
         rep.write("\n=== Mutated Flags Frequency (Entire Queue) ===\n")
         if not flag_count:
             rep.write("No mutated flags found in the queue (or queue is empty).\n")
         else:
+            max_len_flag = max(len(flg) for flg in flag_count)
             for flg, count_val in sorted(flag_count.items()):
-                rep.write(f"{flg} : {count_val}\n")
+                rep.write(f"{flg.ljust(max_len_flag)} : {count_val}\n")
 
         # 4) Seed Analysis Section
-        rep.write("\n=== Seed Analysis ===\n")
+        rep.write("# ===============================================================================================\n")
+        rep.write("#                         Seed Analysis - Seed Descriptions & Flag Frequensies \n")
+        rep.write("# ===============================================================================================\n")
         if not seed_analysis:
             rep.write("No seed files found in the queue (none matched 'orig:seedX.bin').\n")
         else:
@@ -157,7 +199,7 @@ def main():
                 if data["mutated_flags"]:
                     rep.write(f"  Mutated Flags ({len(data['mutated_flags'])}):\n")
                     for flg in sorted(data["mutated_flags"]):
-                        rep.write(f"    {flg}\n")
+                        rep.write(f"  {flg}\n")
                 else:
                     rep.write("  Mutated Flags: None\n")
                 rep.write("\n")
@@ -167,12 +209,44 @@ def main():
             if not seed_flag_count:
                 rep.write("No mutated flags found among seeds.\n")
             else:
+                max_len_seed_flag = max(len(flg) for flg in seed_flag_count)
                 for flg, count_val in sorted(seed_flag_count.items()):
-                    rep.write(f"{flg} : {count_val}\n")
+                    rep.write(f"{flg.ljust(max_len_seed_flag)} : {count_val}\n")
 
         rep.write("\nEnhanced fuzz report generated at ")
         rep.write(report_file + "\n")
 
+def parse_fuzzer_stats(fstats_path):
+    """
+    Parses AFL's 'fuzzer_stats' file into a dictionary:
+      {
+         "start_time": "1740721386",
+         "last_update": "1740807360",
+         ...
+         "execs_done": "3051773",
+         "execs_per_sec": "35.50",
+         ...
+      }
+    Returns an empty dict if the file doesn't exist or can't be read.
+    """
+    if not os.path.isfile(fstats_path):
+        return {}
+
+    stats = {}
+    try:
+        with open(fstats_path, 'r') as f:
+            for line in f:
+                line = line.strip()
+                if not line or ":" not in line:
+                    continue
+                key, val = line.split(":", 1)
+                key = key.strip()
+                val = val.strip()
+                stats[key] = val
+    except Exception:
+        return {}
+
+    return stats
 
 def check_if_seed_file(queue_filename):
     """
@@ -234,4 +308,3 @@ def sorted_non_readme_files(directory: str):
 
 if __name__ == "__main__":
     main()
-# python3 fuzz_report.py ~/output-afl-exp23/default
