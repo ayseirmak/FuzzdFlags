@@ -308,3 +308,4 @@ def sorted_non_readme_files(directory: str):
 
 if __name__ == "__main__":
     main()
+# python3 report2.py ~/output-afl-exp23/default
