@@ -1,0 +1,590 @@
+# =================================================================================================
+#              Differential Testing Report - (Gcc-11.4.0 Gcc-14.2.0 & Clang-19.1.7)
+# =================================================================================================
+
+Fuzzed input dir: /users/user42/output-afl-exp23/default/queue/
+Output dir: diff-test-out-7
+
+
+===================================================================================================
+Fuzzed Input: /users/user42/output-afl-exp23/default/queue//id:000000,time:0,execs:0,orig:seed1.bin
+Decoded Source: /users/user42/rename-llvmSS-after-Cmin/test_326.c
+Decoded Flags (full): -c -fpermissive -w -Wno-implicit-function-declaration -Wno-implicit-int -Wno-return-type -Wno-builtin-redeclared -Wno-int-conversion -target x86_64-linux-gnu -march=native -I/usr/include -I/users/user42/input-include -fno-vectorize -fexcess-precision=fast -fno-sized-deallocation -fsized-deallocation -flax-vector-conversions=integer -fno-strict-enums -fno-sized-deallocation -fsized-deallocation -ffp-exception-behavior=maytrap -flax-vector-conversions=integer -fno-sized-deallocation -fsized-deallocation -ffp-exception-behavior=maytrap -ffunction-sections -fno-sized-deallocation -fsized-deallocation -ffp-exception-behavior=maytrap -fhonor-nans -fno-sized-deallocation -fsized-deallocation -ffp-exception-behavior=maytrap -flax-vector-conversions -fno-sized-deallocation -fsized-deallocation -ffp-exception-behavior=maytrap -fno-strict-overflow -fno-sized-deallocation -fsized-deallocation -ffp-exception-behavior=maytrap -fno-strict-return -fno-sized-deallocation -fsized-deallocation -ffp-exception-behavior=strict -ffp-model=precise -falign-functions
+Mutated Flags (no clang fixed): -fno-vectorize -fexcess-precision=fast -fno-sized-deallocation -fsized-deallocation -flax-vector-conversions=integer -fno-strict-enums -fno-sized-deallocation -fsized-deallocation -ffp-exception-behavior=maytrap -flax-vector-conversions=integer -fno-sized-deallocation -fsized-deallocation -ffp-exception-behavior=maytrap -ffunction-sections -fno-sized-deallocation -fsized-deallocation -ffp-exception-behavior=maytrap -fhonor-nans -fno-sized-deallocation -fsized-deallocation -ffp-exception-behavior=maytrap -flax-vector-conversions -fno-sized-deallocation -fsized-deallocation -ffp-exception-behavior=maytrap -fno-strict-overflow -fno-sized-deallocation -fsized-deallocation -ffp-exception-behavior=maytrap -fno-strict-return -fno-sized-deallocation -fsized-deallocation -ffp-exception-behavior=strict -ffp-model=precise -falign-functions
+
+Compilation ---------------------------------------------------------------------------------------
+   gcc-14 => OK
+   gcc-11 => OK
+   llvm-19 => OK
+
+Execution -----------------------------------------------------------------------------------------
+   gcc-14 => OK
+   gcc-11 => OK
+   llvm-19 => OK
+
+#--------------------------------------------------------------------------------------------------
+**All match among OK compilers
+#--------------------------------------------------------------------------------------------------
+
+===================================================================================================
+Fuzzed Input: /users/user42/output-afl-exp23/default/queue//id:000001,time:0,execs:0,orig:seed10.bin
+Decoded Source: /users/user42/rename-llvmSS-after-Cmin/test_740.c
+Decoded Flags (full): -c -fpermissive -w -Wno-implicit-function-declaration -Wno-implicit-int -Wno-return-type -Wno-builtin-redeclared -Wno-int-conversion -target x86_64-linux-gnu -march=native -I/usr/include -I/users/user42/input-include -fdenormal-fp-math=ieee -ffixed-point -fno-approx-func -fno-unroll-loops -Os -flax-vector-conversions -funsigned-char -fstack-protector-strong -Oz -freciprocal-math -fassociative-math -fast
+Mutated Flags (no clang fixed): -fdenormal-fp-math=ieee -ffixed-point -fno-approx-func -fno-unroll-loops -Os -flax-vector-conversions -funsigned-char -fstack-protector-strong -Oz -freciprocal-math -fassociative-math -fast
+
+Compilation ---------------------------------------------------------------------------------------
+   gcc-14 => OK
+   gcc-11 => OK
+   llvm-19 => OK
+
+Execution -----------------------------------------------------------------------------------------
+   gcc-14 => OK
+   gcc-11 => OK
+   llvm-19 => OK
+
+#--------------------------------------------------------------------------------------------------
+**All match among OK compilers
+#--------------------------------------------------------------------------------------------------
+
+===================================================================================================
+Fuzzed Input: /users/user42/output-afl-exp23/default/queue//id:000002,time:0,execs:0,orig:seed2.bin
+Decoded Source: /users/user42/rename-llvmSS-after-Cmin/test_100.c
+Decoded Flags (full): -c -fpermissive -w -Wno-implicit-function-declaration -Wno-implicit-int -Wno-return-type -Wno-builtin-redeclared -Wno-int-conversion -target x86_64-linux-gnu -march=native -I/usr/include -I/users/user42/input-include -Oz -fno-finite-loops -fno-PIE -fno-signed-zeros
+Mutated Flags (no clang fixed): -Oz -fno-finite-loops -fno-PIE -fno-signed-zeros
+
+Compilation ---------------------------------------------------------------------------------------
+   gcc-14 => OK
+   gcc-11 => OK
+   llvm-19 => OK
+
+Execution -----------------------------------------------------------------------------------------
+   gcc-14 => OK
+   gcc-11 => OK
+   llvm-19 => OK
+
+#--------------------------------------------------------------------------------------------------
+**All match among OK compilers
+#--------------------------------------------------------------------------------------------------
+
+===================================================================================================
+Fuzzed Input: /users/user42/output-afl-exp23/default/queue//id:000003,time:0,execs:0,orig:seed3.bin
+Decoded Source: /users/user42/rename-llvmSS-after-Cmin/test_1395.c
+Decoded Flags (full): -c -fpermissive -w -Wno-implicit-function-declaration -Wno-implicit-int -Wno-return-type -Wno-builtin-redeclared -Wno-int-conversion -target x86_64-linux-gnu -march=native -I/usr/include -I/users/user42/input-include -Oz -fasm -fstrict-enums -fstrict-float-cast-overflow -funsigned-char -fstrict-aliasing -ffp-exception-behavior=ignore -fno-protect-parens
+Mutated Flags (no clang fixed): -Oz -fasm -fstrict-enums -fstrict-float-cast-overflow -funsigned-char -fstrict-aliasing -ffp-exception-behavior=ignore -fno-protect-parens
+
+Compilation ---------------------------------------------------------------------------------------
+   gcc-14 => OK
+   gcc-11 => OK
+   llvm-19 => OK
+
+Execution -----------------------------------------------------------------------------------------
+   gcc-14 => OK
+   gcc-11 => OK
+   llvm-19 => OK
+
+#--------------------------------------------------------------------------------------------------
+**All match among OK compilers
+#--------------------------------------------------------------------------------------------------
+
+===================================================================================================
+Fuzzed Input: /users/user42/output-afl-exp23/default/queue//id:000004,time:0,execs:0,orig:seed4.bin
+Decoded Source: /users/user42/rename-llvmSS-after-Cmin/test_326.c
+Decoded Flags (full): -c -fpermissive -w -Wno-implicit-function-declaration -Wno-implicit-int -Wno-return-type -Wno-builtin-redeclared -Wno-int-conversion -target x86_64-linux-gnu -march=native -I/usr/include -I/users/user42/input-include -fno-vectorize -fexcess-precision=fast -fno-sized-deallocation -fsized-deallocation -fno-approx-func -ffp-model=fast -fno-sized-deallocation -fsized-deallocation -ffp-exception-behavior=maytrap -flax-vector-conversions=integer -fno-sized-deallocation -fsized-deallocation -ffp-exception-behavior=maytrap -ffp-model=strict -fno-sized-deallocation -fsized-deallocation -ffp-model=precise -fno-asm-blocks -falign-functions
+Mutated Flags (no clang fixed): -fno-vectorize -fexcess-precision=fast -fno-sized-deallocation -fsized-deallocation -fno-approx-func -ffp-model=fast -fno-sized-deallocation -fsized-deallocation -ffp-exception-behavior=maytrap -flax-vector-conversions=integer -fno-sized-deallocation -fsized-deallocation -ffp-exception-behavior=maytrap -ffp-model=strict -fno-sized-deallocation -fsized-deallocation -ffp-model=precise -fno-asm-blocks -falign-functions
+
+Compilation ---------------------------------------------------------------------------------------
+   gcc-14 => OK
+   gcc-11 => OK
+   llvm-19 => OK
+
+Execution -----------------------------------------------------------------------------------------
+   gcc-14 => OK
+   gcc-11 => OK
+   llvm-19 => OK
+
+#--------------------------------------------------------------------------------------------------
+**All match among OK compilers
+#--------------------------------------------------------------------------------------------------
+
+===================================================================================================
+Fuzzed Input: /users/user42/output-afl-exp23/default/queue//id:000005,time:0,execs:0,orig:seed5.bin
+Decoded Source: /users/user42/rename-llvmSS-after-Cmin/test_235.c
+Decoded Flags (full): -c -fpermissive -w -Wno-implicit-function-declaration -Wno-implicit-int -Wno-return-type -Wno-builtin-redeclared -Wno-int-conversion -target x86_64-linux-gnu -march=native -I/usr/include -I/users/user42/input-include -fassociative-math -ffinite-math-only -fno-assume-sane-operator-new -funsigned-char
+Mutated Flags (no clang fixed): -fassociative-math -ffinite-math-only -fno-assume-sane-operator-new -funsigned-char
+
+Compilation ---------------------------------------------------------------------------------------
+   gcc-14 => OK
+   gcc-11 => OK
+   llvm-19 => OK
+
+Execution -----------------------------------------------------------------------------------------
+   gcc-14 => OK
+   gcc-11 => OK
+   llvm-19 => OK
+
+#--------------------------------------------------------------------------------------------------
+**All match among OK compilers
+#--------------------------------------------------------------------------------------------------
+
+===================================================================================================
+Fuzzed Input: /users/user42/output-afl-exp23/default/queue//id:000006,time:0,execs:0,orig:seed6.bin
+Decoded Source: /users/user42/rename-llvmSS-after-Cmin/test_686.c
+Decoded Flags (full): -c -fpermissive -w -Wno-implicit-function-declaration -Wno-implicit-int -Wno-return-type -Wno-builtin-redeclared -Wno-int-conversion -target x86_64-linux-gnu -march=native -I/usr/include -I/users/user42/input-include -ffp-exception-behavior=ignore -fPIE -faccess-control -faddrsig -fallow-unsupported -fast -fexcess-precision=standard -ffp-contract=fast -ffp-model=strict -fno-asm -fno-stack-size-section -fno-strict-aliasing -fprotect-parens -ftree-vectorize
+Mutated Flags (no clang fixed): -ffp-exception-behavior=ignore -fPIE -faccess-control -faddrsig -fallow-unsupported -fast -fexcess-precision=standard -ffp-contract=fast -ffp-model=strict -fno-asm -fno-stack-size-section -fno-strict-aliasing -fprotect-parens -ftree-vectorize
+
+Compilation ---------------------------------------------------------------------------------------
+   gcc-14 => OK
+   gcc-11 => OK
+   llvm-19 => OK
+
+Execution -----------------------------------------------------------------------------------------
+   gcc-14 => OK
+   gcc-11 => OK
+   llvm-19 => OK
+
+#--------------------------------------------------------------------------------------------------
+**All match among OK compilers
+#--------------------------------------------------------------------------------------------------
+
+===================================================================================================
+Fuzzed Input: /users/user42/output-afl-exp23/default/queue//id:000007,time:0,execs:0,orig:seed7.bin
+Decoded Source: /users/user42/rename-llvmSS-after-Cmin/test_1250.c
+Decoded Flags (full): -c -fpermissive -w -Wno-implicit-function-declaration -Wno-implicit-int -Wno-return-type -Wno-builtin-redeclared -Wno-int-conversion -target x86_64-linux-gnu -march=native -I/usr/include -I/users/user42/input-include -ffixed-point -fassume-sane-operator-new -faccess-control -fPIC -falign-functions -fexcess-precision=16 -fexcess-precision=fast -ffp-eval-method=double -ffp-model=precise -fno-access-control -fno-align-functions -fno-honor-infinities -fno-protect-parens -fno-strict-aliasing -fno-unsigned-char -fstrict-enums -ftrapping-math -funsigned-char
+Mutated Flags (no clang fixed): -ffixed-point -fassume-sane-operator-new -faccess-control -fPIC -falign-functions -fexcess-precision=16 -fexcess-precision=fast -ffp-eval-method=double -ffp-model=precise -fno-access-control -fno-align-functions -fno-honor-infinities -fno-protect-parens -fno-strict-aliasing -fno-unsigned-char -fstrict-enums -ftrapping-math -funsigned-char
+
+Compilation ---------------------------------------------------------------------------------------
+   gcc-14 => OK
+   gcc-11 => OK
+   llvm-19 => OK
+
+Execution -----------------------------------------------------------------------------------------
+   gcc-14 => OK
+   gcc-11 => OK
+   llvm-19 => OK
+
+#--------------------------------------------------------------------------------------------------
+**All match among OK compilers
+#--------------------------------------------------------------------------------------------------
+
+===================================================================================================
+Fuzzed Input: /users/user42/output-afl-exp23/default/queue//id:000008,time:0,execs:0,orig:seed8.bin
+Decoded Source: /users/user42/rename-llvmSS-after-Cmin/test_459.c
+Decoded Flags (full): -c -fpermissive -w -Wno-implicit-function-declaration -Wno-implicit-int -Wno-return-type -Wno-builtin-redeclared -Wno-int-conversion -target x86_64-linux-gnu -march=native -I/usr/include -I/users/user42/input-include -Ofast -fblocks -ffp-exception-behavior=ignore -fno-associative-math -fno-signed-char -fno-strict-return -fstack-size-section -funique-section-names -funsafe-math-optimizations -funroll-loops
+Mutated Flags (no clang fixed): -Ofast -fblocks -ffp-exception-behavior=ignore -fno-associative-math -fno-signed-char -fno-strict-return -fstack-size-section -funique-section-names -funsafe-math-optimizations -funroll-loops
+
+Compilation ---------------------------------------------------------------------------------------
+   gcc-14 => OK
+   gcc-11 => OK
+   llvm-19 => OK
+
+Execution -----------------------------------------------------------------------------------------
+   gcc-14 => OK
+   gcc-11 => OK
+   llvm-19 => OK
+
+#--------------------------------------------------------------------------------------------------
+**All match among OK compilers
+#--------------------------------------------------------------------------------------------------
+
+===================================================================================================
+Fuzzed Input: /users/user42/output-afl-exp23/default/queue//id:000009,time:0,execs:0,orig:seed9.bin
+Decoded Source: /users/user42/rename-llvmSS-after-Cmin/test_273.c
+Decoded Flags (full): -c -fpermissive -w -Wno-implicit-function-declaration -Wno-implicit-int -Wno-return-type -Wno-builtin-redeclared -Wno-int-conversion -target x86_64-linux-gnu -march=native -I/usr/include -I/users/user42/input-include -fPIE -ffixed-point -fno-finite-loops -ftree-vectorize -funified-lto -fno-honor-nans -fprotect-parens -fno-wrapv -fhonor-nans -ffast-math -ffp-contract=off
+Mutated Flags (no clang fixed): -fPIE -ffixed-point -fno-finite-loops -ftree-vectorize -funified-lto -fno-honor-nans -fprotect-parens -fno-wrapv -fhonor-nans -ffast-math -ffp-contract=off
+
+Compilation ---------------------------------------------------------------------------------------
+   gcc-14 => OK
+   gcc-11 => OK
+   llvm-19 => OK
+
+Execution -----------------------------------------------------------------------------------------
+   gcc-14 => OK
+   gcc-11 => OK
+   llvm-19 => OK
+
+#--------------------------------------------------------------------------------------------------
+**All match among OK compilers
+#--------------------------------------------------------------------------------------------------
+
+===================================================================================================
+Fuzzed Input: /users/user42/output-afl-exp23/default/queue//id:000010,src:000002,time:458,execs:123,op:quick,pos:0,+cov
+Decoded Source: /users/user42/rename-llvmSS-after-Cmin/test_169.c
+Decoded Flags (full): -c -fpermissive -w -Wno-implicit-function-declaration -Wno-implicit-int -Wno-return-type -Wno-builtin-redeclared -Wno-int-conversion -target x86_64-linux-gnu -march=native -I/usr/include -I/users/user42/input-include -Oz -fno-finite-loops -fno-PIE -fno-signed-zeros
+Mutated Flags (no clang fixed): -Oz -fno-finite-loops -fno-PIE -fno-signed-zeros
+
+Compilation ---------------------------------------------------------------------------------------
+   gcc-14 => OK
+   gcc-11 => OK
+   llvm-19 => Fail(0)
+---------------------------------------------------------------------------------------------------
+why llvm-19 could not compile?
+Fail(0) => (Reason)
+/usr/bin/x86_64-linux-gnu-ld: /tmp/test_169-bf29f3.o: relocation R_X86_64_32 against symbol `a' can not be used when making a PIE object; recompile with -fPIE
+/usr/bin/x86_64-linux-gnu-ld: failed to set dynamic section sizes: bad value
+clang: error: linker command failed with exit code 1 (use -v to see invocation)
+
+Execution -----------------------------------------------------------------------------------------
+   gcc-14 => OK
+   gcc-11 => OK
+   llvm-19 => (No-Execution)
+
+#--------------------------------------------------------------------------------------------------
+**All match among OK compilers
+#--------------------------------------------------------------------------------------------------
+
+===================================================================================================
+Fuzzed Input: /users/user42/output-afl-exp23/default/queue//id:000011,src:000002,time:1995,execs:136,op:quick,pos:1,+cov
+Decoded Source: /users/user42/rename-llvmSS-after-Cmin/test_1154.c
+Decoded Flags (full): -c -fpermissive -w -Wno-implicit-function-declaration -Wno-implicit-int -Wno-return-type -Wno-builtin-redeclared -Wno-int-conversion -target x86_64-linux-gnu -march=native -I/usr/include -I/users/user42/input-include -Oz -fno-finite-loops -fno-PIE -fno-signed-zeros
+Mutated Flags (no clang fixed): -Oz -fno-finite-loops -fno-PIE -fno-signed-zeros
+
+Compilation ---------------------------------------------------------------------------------------
+   gcc-14 => OK
+   gcc-11 => OK
+   llvm-19 => Fail(0)
+---------------------------------------------------------------------------------------------------
+why llvm-19 could not compile?
+Fail(0) => (Reason)
+/usr/bin/x86_64-linux-gnu-ld: /tmp/test_1154-a23e73.o: relocation R_X86_64_32 against `.rodata' can not be used when making a PIE object; recompile with -fPIE
+/usr/bin/x86_64-linux-gnu-ld: failed to set dynamic section sizes: bad value
+clang: error: linker command failed with exit code 1 (use -v to see invocation)
+
+Execution -----------------------------------------------------------------------------------------
+   gcc-14 => OK
+   gcc-11 => OK
+   llvm-19 => (No-Execution)
+
+#--------------------------------------------------------------------------------------------------
+**All match among OK compilers
+#--------------------------------------------------------------------------------------------------
+
+===================================================================================================
+Fuzzed Input: /users/user42/output-afl-exp23/default/queue//id:000012,src:000002,time:4154,execs:149,op:quick,pos:2,+cov
+Decoded Source: /users/user42/rename-llvmSS-after-Cmin/test_100.c
+Decoded Flags (full): -c -fpermissive -w -Wno-implicit-function-declaration -Wno-implicit-int -Wno-return-type -Wno-builtin-redeclared -Wno-int-conversion -target x86_64-linux-gnu -march=native -I/usr/include -I/users/user42/input-include -ffp-eval-method=extended -fno-finite-loops -fno-PIE -fno-signed-zeros
+Mutated Flags (no clang fixed): -ffp-eval-method=extended -fno-finite-loops -fno-PIE -fno-signed-zeros
+
+Compilation ---------------------------------------------------------------------------------------
+   gcc-14 => OK
+   gcc-11 => OK
+   llvm-19 => OK
+
+Execution -----------------------------------------------------------------------------------------
+   gcc-14 => OK
+   gcc-11 => OK
+   llvm-19 => OK
+
+#--------------------------------------------------------------------------------------------------
+**All match among OK compilers
+#--------------------------------------------------------------------------------------------------
+
+===================================================================================================
+Fuzzed Input: /users/user42/output-afl-exp23/default/queue//id:000013,src:000002,time:5157,execs:162,op:quick,pos:3,+cov
+Decoded Source: /users/user42/rename-llvmSS-after-Cmin/test_100.c
+Decoded Flags (full): -c -fpermissive -w -Wno-implicit-function-declaration -Wno-implicit-int -Wno-return-type -Wno-builtin-redeclared -Wno-int-conversion -target x86_64-linux-gnu -march=native -I/usr/include -I/users/user42/input-include -Oz -O1 -fno-PIE -fno-signed-zeros
+Mutated Flags (no clang fixed): -Oz -O1 -fno-PIE -fno-signed-zeros
+
+Compilation ---------------------------------------------------------------------------------------
+   gcc-14 => OK
+   gcc-11 => OK
+   llvm-19 => OK
+
+Execution -----------------------------------------------------------------------------------------
+   gcc-14 => OK
+   gcc-11 => OK
+   llvm-19 => OK
+
+#--------------------------------------------------------------------------------------------------
+**All match among OK compilers
+#--------------------------------------------------------------------------------------------------
+
+===================================================================================================
+Fuzzed Input: /users/user42/output-afl-exp23/default/queue//id:000014,src:000002,time:6239,execs:175,op:quick,pos:4,+cov
+Decoded Source: /users/user42/rename-llvmSS-after-Cmin/test_100.c
+Decoded Flags (full): -c -fpermissive -w -Wno-implicit-function-declaration -Wno-implicit-int -Wno-return-type -Wno-builtin-redeclared -Wno-int-conversion -target x86_64-linux-gnu -march=native -I/usr/include -I/users/user42/input-include -Oz -fno-finite-loops -faligned-allocation -fno-signed-zeros
+Mutated Flags (no clang fixed): -Oz -fno-finite-loops -faligned-allocation -fno-signed-zeros
+
+Compilation ---------------------------------------------------------------------------------------
+   gcc-14 => OK
+   gcc-11 => OK
+   llvm-19 => OK
+
+Execution -----------------------------------------------------------------------------------------
+   gcc-14 => OK
+   gcc-11 => OK
+   llvm-19 => OK
+
+#--------------------------------------------------------------------------------------------------
+**All match among OK compilers
+#--------------------------------------------------------------------------------------------------
+
+===================================================================================================
+Fuzzed Input: /users/user42/output-afl-exp23/default/queue//id:000015,src:000002,time:7324,execs:188,op:quick,pos:5,+cov
+Decoded Source: /users/user42/rename-llvmSS-after-Cmin/test_100.c
+Decoded Flags (full): -c -fpermissive -w -Wno-implicit-function-declaration -Wno-implicit-int -Wno-return-type -Wno-builtin-redeclared -Wno-int-conversion -target x86_64-linux-gnu -march=native -I/usr/include -I/users/user42/input-include -Oz -fno-finite-loops -fno-PIE -fno-signed-char
+Mutated Flags (no clang fixed): -Oz -fno-finite-loops -fno-PIE -fno-signed-char
+
+Compilation ---------------------------------------------------------------------------------------
+   gcc-14 => OK
+   gcc-11 => OK
+   llvm-19 => OK
+
+Execution -----------------------------------------------------------------------------------------
+   gcc-14 => OK
+   gcc-11 => OK
+   llvm-19 => OK
+
+#--------------------------------------------------------------------------------------------------
+**All match among OK compilers
+#--------------------------------------------------------------------------------------------------
+
+===================================================================================================
+Fuzzed Input: /users/user42/output-afl-exp23/default/queue//id:000016,src:000002,time:8500,execs:202,op:flip1,pos:0,+cov
+Decoded Source: /users/user42/rename-llvmSS-after-Cmin/test_228.c
+Decoded Flags (full): -c -fpermissive -w -Wno-implicit-function-declaration -Wno-implicit-int -Wno-return-type -Wno-builtin-redeclared -Wno-int-conversion -target x86_64-linux-gnu -march=native -I/usr/include -I/users/user42/input-include -Oz -fno-finite-loops -fno-PIE -fno-signed-zeros
+Mutated Flags (no clang fixed): -Oz -fno-finite-loops -fno-PIE -fno-signed-zeros
+
+Compilation ---------------------------------------------------------------------------------------
+   gcc-14 => OK
+   gcc-11 => OK
+   llvm-19 => OK
+
+Execution -----------------------------------------------------------------------------------------
+   gcc-14 => OK
+   gcc-11 => OK
+   llvm-19 => OK
+
+#--------------------------------------------------------------------------------------------------
+**All match among OK compilers
+#--------------------------------------------------------------------------------------------------
+
+===================================================================================================
+Fuzzed Input: /users/user42/output-afl-exp23/default/queue//id:000017,src:000002,time:9704,execs:215,op:flip1,pos:0,+cov
+Decoded Source: /users/user42/rename-llvmSS-after-Cmin/test_36.c
+Decoded Flags (full): -c -fpermissive -w -Wno-implicit-function-declaration -Wno-implicit-int -Wno-return-type -Wno-builtin-redeclared -Wno-int-conversion -target x86_64-linux-gnu -march=native -I/usr/include -I/users/user42/input-include -Oz -fno-finite-loops -fno-PIE -fno-signed-zeros
+Mutated Flags (no clang fixed): -Oz -fno-finite-loops -fno-PIE -fno-signed-zeros
+
+Compilation ---------------------------------------------------------------------------------------
+   gcc-14 => Fail(0)
+   gcc-11 => Fail(0)
+   llvm-19 => Fail(0)
+---------------------------------------------------------------------------------------------------
+why gcc-14 could not compile?
+Fail(0) => (Reason)
+/usr/bin/ld: /lib/x86_64-linux-gnu/crt1.o: in function `_start':
+(.text+0x1b): undefined reference to `main'
+collect2: error: ld returned 1 exit status
+---------------------------------------------------------------------------------------------------
+why gcc-11 could not compile?
+Fail(0) => (Reason)
+/usr/bin/ld: /lib/x86_64-linux-gnu/crt1.o: in function `_start':
+(.text+0x1b): undefined reference to `main'
+collect2: error: ld returned 1 exit status
+---------------------------------------------------------------------------------------------------
+why llvm-19 could not compile?
+Fail(0) => (Reason)
+/usr/bin/x86_64-linux-gnu-ld: /lib/x86_64-linux-gnu/Scrt1.o: in function `_start':
+(.text+0x1b): undefined reference to `main'
+clang: error: linker command failed with exit code 1 (use -v to see invocation)
+
+Execution -----------------------------------------------------------------------------------------
+   gcc-14 => (No-Execution)
+   gcc-11 => (No-Execution)
+   llvm-19 => (No-Execution)
+
+#--------------------------------------------------------------------------------------------------
+#--------------------------------------------------------------------------------------------------
+
+===================================================================================================
+Fuzzed Input: /users/user42/output-afl-exp23/default/queue//id:000018,src:000002,time:10913,execs:228,op:flip1,pos:0,+cov
+Decoded Source: /users/user42/rename-llvmSS-after-Cmin/test_68.c
+Decoded Flags (full): -c -fpermissive -w -Wno-implicit-function-declaration -Wno-implicit-int -Wno-return-type -Wno-builtin-redeclared -Wno-int-conversion -target x86_64-linux-gnu -march=native -I/usr/include -I/users/user42/input-include -Oz -fno-finite-loops -fno-PIE -fno-signed-zeros
+Mutated Flags (no clang fixed): -Oz -fno-finite-loops -fno-PIE -fno-signed-zeros
+
+Compilation ---------------------------------------------------------------------------------------
+   gcc-14 => OK
+   gcc-11 => OK
+   llvm-19 => OK
+
+Execution -----------------------------------------------------------------------------------------
+   gcc-14 => OK
+   gcc-11 => OK
+   llvm-19 => OK
+
+#--------------------------------------------------------------------------------------------------
+**All match among OK compilers
+#--------------------------------------------------------------------------------------------------
+
+===================================================================================================
+Fuzzed Input: /users/user42/output-afl-exp23/default/queue//id:000019,src:000002,time:12941,execs:241,op:flip1,pos:0,+cov
+Decoded Source: /users/user42/rename-llvmSS-after-Cmin/test_116.c
+Decoded Flags (full): -c -fpermissive -w -Wno-implicit-function-declaration -Wno-implicit-int -Wno-return-type -Wno-builtin-redeclared -Wno-int-conversion -target x86_64-linux-gnu -march=native -I/usr/include -I/users/user42/input-include -Oz -fno-finite-loops -fno-PIE -fno-signed-zeros
+Mutated Flags (no clang fixed): -Oz -fno-finite-loops -fno-PIE -fno-signed-zeros
+
+Compilation ---------------------------------------------------------------------------------------
+   gcc-14 => Fail(0)
+   gcc-11 => Fail(0)
+   llvm-19 => Fail(0)
+---------------------------------------------------------------------------------------------------
+why gcc-14 could not compile?
+Fail(0) => (Reason)
+/users/user42/rename-llvmSS-after-Cmin/test_116.c:2:10: fatal error: fp-cmp-4.c: No such file or directory
+    2 | #include "fp-cmp-4.c"
+      |          ^~~~~~~~~~~~
+compilation terminated.
+---------------------------------------------------------------------------------------------------
+why gcc-11 could not compile?
+Fail(0) => (Reason)
+/users/user42/rename-llvmSS-after-Cmin/test_116.c:2:10: fatal error: fp-cmp-4.c: No such file or directory
+    2 | #include "fp-cmp-4.c"
+      |          ^~~~~~~~~~~~
+compilation terminated.
+---------------------------------------------------------------------------------------------------
+why llvm-19 could not compile?
+Fail(0) => (Reason)
+/users/user42/rename-llvmSS-after-Cmin/test_116.c:2:10: fatal error: 'fp-cmp-4.c' file not found
+    2 | #include "fp-cmp-4.c"
+      |          ^~~~~~~~~~~~
+1 error generated.
+
+Execution -----------------------------------------------------------------------------------------
+   gcc-14 => (No-Execution)
+   gcc-11 => (No-Execution)
+   llvm-19 => (No-Execution)
+
+#--------------------------------------------------------------------------------------------------
+#--------------------------------------------------------------------------------------------------
+
+===================================================================================================
+Fuzzed Input: /users/user42/output-afl-exp23/default/queue//id:000020,src:000002,time:13611,execs:249,op:flip1,pos:0,+cov
+Decoded Source: /users/user42/rename-llvmSS-after-Cmin/test_108.c
+Decoded Flags (full): -c -fpermissive -w -Wno-implicit-function-declaration -Wno-implicit-int -Wno-return-type -Wno-builtin-redeclared -Wno-int-conversion -target x86_64-linux-gnu -march=native -I/usr/include -I/users/user42/input-include -Oz -fno-finite-loops -fno-PIE -fno-signed-zeros
+Mutated Flags (no clang fixed): -Oz -fno-finite-loops -fno-PIE -fno-signed-zeros
+
+Compilation ---------------------------------------------------------------------------------------
+   gcc-14 => OK
+   gcc-11 => OK
+   llvm-19 => OK
+
+Execution -----------------------------------------------------------------------------------------
+   gcc-14 => OK
+   gcc-11 => OK
+   llvm-19 => OK
+
+#--------------------------------------------------------------------------------------------------
+**All match among OK compilers
+#--------------------------------------------------------------------------------------------------
+
+===================================================================================================
+Fuzzed Input: /users/user42/output-afl-exp23/default/queue//id:000021,src:000002,time:16012,execs:262,op:flip1,pos:0,+cov
+Decoded Source: /users/user42/rename-llvmSS-after-Cmin/test_96.c
+Decoded Flags (full): -c -fpermissive -w -Wno-implicit-function-declaration -Wno-implicit-int -Wno-return-type -Wno-builtin-redeclared -Wno-int-conversion -target x86_64-linux-gnu -march=native -I/usr/include -I/users/user42/input-include -Oz -fno-finite-loops -fno-PIE -fno-signed-zeros
+Mutated Flags (no clang fixed): -Oz -fno-finite-loops -fno-PIE -fno-signed-zeros
+
+Compilation ---------------------------------------------------------------------------------------
+   gcc-14 => OK
+   gcc-11 => OK
+   llvm-19 => OK
+
+Execution -----------------------------------------------------------------------------------------
+   gcc-14 => OK
+   gcc-11 => OK
+   llvm-19 => OK
+
+#--------------------------------------------------------------------------------------------------
+**All match among OK compilers
+#--------------------------------------------------------------------------------------------------
+
+===================================================================================================
+Fuzzed Input: /users/user42/output-afl-exp23/default/queue//id:000022,src:000002,time:17226,execs:275,op:flip1,pos:0,+cov
+Decoded Source: /users/user42/rename-llvmSS-after-Cmin/test_102.c
+Decoded Flags (full): -c -fpermissive -w -Wno-implicit-function-declaration -Wno-implicit-int -Wno-return-type -Wno-builtin-redeclared -Wno-int-conversion -target x86_64-linux-gnu -march=native -I/usr/include -I/users/user42/input-include -Oz -fno-finite-loops -fno-PIE -fno-signed-zeros
+Mutated Flags (no clang fixed): -Oz -fno-finite-loops -fno-PIE -fno-signed-zeros
+
+Compilation ---------------------------------------------------------------------------------------
+   gcc-14 => OK
+   gcc-11 => OK
+   llvm-19 => Fail(0)
+---------------------------------------------------------------------------------------------------
+why llvm-19 could not compile?
+Fail(0) => (Reason)
+/usr/bin/x86_64-linux-gnu-ld: /tmp/test_102-59112b.o: relocation R_X86_64_32 against `.rodata.cst32' can not be used when making a PIE object; recompile with -fPIE
+/usr/bin/x86_64-linux-gnu-ld: failed to set dynamic section sizes: bad value
+clang: error: linker command failed with exit code 1 (use -v to see invocation)
+
+Execution -----------------------------------------------------------------------------------------
+   gcc-14 => OK
+   gcc-11 => OK
+   llvm-19 => (No-Execution)
+
+#--------------------------------------------------------------------------------------------------
+**All match among OK compilers
+#--------------------------------------------------------------------------------------------------
+
+===================================================================================================
+Fuzzed Input: /users/user42/output-afl-exp23/default/queue//id:000023,src:000002,time:18462,execs:288,op:flip1,pos:0,+cov
+Decoded Source: /users/user42/rename-llvmSS-after-Cmin/test_101.c
+Decoded Flags (full): -c -fpermissive -w -Wno-implicit-function-declaration -Wno-implicit-int -Wno-return-type -Wno-builtin-redeclared -Wno-int-conversion -target x86_64-linux-gnu -march=native -I/usr/include -I/users/user42/input-include -Oz -fno-finite-loops -fno-PIE -fno-signed-zeros
+Mutated Flags (no clang fixed): -Oz -fno-finite-loops -fno-PIE -fno-signed-zeros
+
+Compilation ---------------------------------------------------------------------------------------
+   gcc-14 => OK
+   gcc-11 => OK
+   llvm-19 => OK
+
+Execution -----------------------------------------------------------------------------------------
+   gcc-14 => OK
+   gcc-11 => OK
+   llvm-19 => OK
+
+#--------------------------------------------------------------------------------------------------
+**All match among OK compilers
+#--------------------------------------------------------------------------------------------------
+
+===================================================================================================
+Fuzzed Input: /users/user42/output-afl-exp23/default/queue//id:000024,src:000002,time:19639,execs:301,op:flip1,pos:1,+cov
+Decoded Source: /users/user42/rename-llvmSS-after-Cmin/test_473.c
+Decoded Flags (full): -c -fpermissive -w -Wno-implicit-function-declaration -Wno-implicit-int -Wno-return-type -Wno-builtin-redeclared -Wno-int-conversion -target x86_64-linux-gnu -march=native -I/usr/include -I/users/user42/input-include -Oz -fno-finite-loops -fno-PIE -fno-signed-zeros
+Mutated Flags (no clang fixed): -Oz -fno-finite-loops -fno-PIE -fno-signed-zeros
+
+Compilation ---------------------------------------------------------------------------------------
+   gcc-14 => OK
+   gcc-11 => OK
+   llvm-19 => Fail(0)
+---------------------------------------------------------------------------------------------------
+why llvm-19 could not compile?
+Fail(0) => (Reason)
+/usr/bin/x86_64-linux-gnu-ld: /tmp/test_473-1ee3c5.o: relocation R_X86_64_32S against symbol `a' can not be used when making a PIE object; recompile with -fPIE
+/usr/bin/x86_64-linux-gnu-ld: failed to set dynamic section sizes: bad value
+clang: error: linker command failed with exit code 1 (use -v to see invocation)
+
+Execution -----------------------------------------------------------------------------------------
+   gcc-14 => OK
+   gcc-11 => OK
+   llvm-19 => (No-Execution)
+
+#--------------------------------------------------------------------------------------------------
+**All match among OK compilers
+#--------------------------------------------------------------------------------------------------
+
+===================================================================================================
+Fuzzed Input: /users/user42/output-afl-exp23/default/queue//id:000025,src:000002,time:21027,execs:314,op:flip1,pos:1,+cov
+Decoded Source: /users/user42/rename-llvmSS-after-Cmin/test_1139.c
+Decoded Flags (full): -c -fpermissive -w -Wno-implicit-function-declaration -Wno-implicit-int -Wno-return-type -Wno-builtin-redeclared -Wno-int-conversion -target x86_64-linux-gnu -march=native -I/usr/include -I/users/user42/input-include -Oz -fno-finite-loops -fno-PIE -fno-signed-zeros
+Mutated Flags (no clang fixed): -Oz -fno-finite-loops -fno-PIE -fno-signed-zeros
+
+Compilation ---------------------------------------------------------------------------------------
+   gcc-14 => OK
+   gcc-11 => OK
+   llvm-19 => OK
+
+Execution -----------------------------------------------------------------------------------------
+   gcc-14 => OK
+   gcc-11 => OK
+   llvm-19 => OK
+
+#--------------------------------------------------------------------------------------------------
+**All match among OK compilers
+#--------------------------------------------------------------------------------------------------
+
+=== End of Differential Testing ===
