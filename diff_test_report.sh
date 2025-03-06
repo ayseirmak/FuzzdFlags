@@ -1,6 +1,4 @@
 #!/usr/bin/env bash
-set -euo pipefail
-
 # Usage: ./run_diff_test.sh <fuzzed_queue_dir> <diff_out_dir>
 
 if [ $# -lt 2 ]; then
@@ -14,6 +12,24 @@ mkdir -p "$OUT_DIR"
 
 DIFF_REPORT="$OUT_DIR/diff_report.txt"
 > "$DIFF_REPORT"
+
+
+###############################################################################
+# Additional Folders for Crashes, Hangs, Mismatches
+###############################################################################
+CRASH_DIR="$OUT_DIR/Crashes"
+HANG_DIR="$OUT_DIR/Hangs"
+MISMATCH_DIR="$OUT_DIR/MismatchLogs"
+
+mkdir -p "$CRASH_DIR" "$HANG_DIR" "$MISMATCH_DIR"
+
+CRASH_REPORT="$CRASH_DIR/crash_report.txt"
+HANG_REPORT="$HANG_DIR/hang_report.txt"
+MISMATCH_REPORT="$MISMATCH_DIR/mismatch_report.txt"
+
+> "$CRASH_REPORT"
+> "$HANG_REPORT"
+> "$MISMATCH_REPORT"
 
 ################################################################################
 # CONFIG
@@ -84,6 +100,7 @@ CLANG_FIXED_FLAGS=(
 declare -A COMPILATION_EXPLANATIONS
 declare -A EXECUTION_EXPLANATIONS
 
+
 ################################################################################
 # PRINT HEADER
 ################################################################################
@@ -104,21 +121,25 @@ declare -A EXECUTION_EXPLANATIONS
 interpret_result() {
   local rc="$1"
   local log_file="$2"
-  # We'll only label "Timeout" or "Fail(...)". We can also do Segfault if you want,
-  # but you said you're ignoring segfault / UB for now and only care about success vs fail vs timeout.
-  
-  # If rc=124 => "Timeout"
+
   if [ "$rc" -eq 124 ]; then
     echo "Timeout"
     return
   fi
-  # If nonzero => "Fail(#)"
+  if [ "$rc" -gt 128 ]; then
+    sig=$((rc - 128))
+    echo "Crashed-with-signal:$sig"
+    return
+  fi
+  if grep -iq "undefined behavior" "$log_file"; then
+    echo "UndefinedBehavior"
+    return
+  fi
+
   if [ "$rc" -eq 0 ]; then
     echo "OK"
-    return
   else
     echo "Fail($rc)"
-    return
   fi
 }
 
@@ -156,11 +177,8 @@ decide_base_flags() {
 }
 
 ################################################################################
+# do_compile_and_run
 # do_compile_and_run <compiler> <source> <mutated_flags> <outbase>
-#   1) decide base flags (GCC or Clang)
-#   2) combine -> final_flags
-#   3) compile => log => interpret
-#   4) if success => run => log => interpret
 ################################################################################
 do_compile_and_run() {
   local compiler="$1"
@@ -203,6 +221,7 @@ do_compile_and_run() {
   local compile_log="$OUT_DIR/$outbase-$compiler_name.compile.log"
   local run_log="$OUT_DIR/$outbase-$compiler_name.run.log"
 
+  
   # =======================
   # Compilation
   # =======================
@@ -211,13 +230,8 @@ do_compile_and_run() {
     echo "Command: timeout ${COMPILE_TIMEOUT}s $compiler $final_flags $src -o $bin_out"
   } > "$compile_log"
 
-  if ! timeout "${COMPILE_TIMEOUT}s" "$compiler" $final_flags "$src" -o "$bin_out" >> "$compile_log" 2>&1
-  then
-    comp_rc=$?  # e.g. 1 or 124
-    echo "[!] Compile step had a nonzero exit code ($comp_rc), but continuing..."
-  else
-    comp_rc=0
-  fi
+  (timeout "${COMPILE_TIMEOUT}s" "$compiler" $final_flags "$src" -o "$bin_out")>> "$compile_log" 2>&1
+  comp_rc=$?  # e.g. 1 or 124
   echo "***$comp_rc"
   local comp_res
   comp_res=$(interpret_result "$comp_rc" "$compile_log")
@@ -227,12 +241,12 @@ do_compile_and_run() {
     comp_res="Fail(0)"
   fi
  # store the compilation outcome in an associative array (for the final summary)
-  # e.g. COMPILATION_EXPLANATIONS["gcc-14"]="OK" or "Fail(1)" or "Timeout"
+  # e.g. COMPILATION_EXPLANATIONS["gcc-14"]="OK" or "Fail(1)" or "Timeout" or "Crashed-with-signal:6"
   COMPILATION_EXPLANATIONS["$compiler_name"]="$comp_res"
   echo "[*] $comp_res"
   echo "$outbase"
 
-  if [[ "$comp_res" != "OK" ]]; then
+  if [[ "$comp_res" == Fail* ]]; then
     # store short snippet
       local snippet
       snippet=$(sed -n '3,6p' "$compile_log")
@@ -246,13 +260,9 @@ do_compile_and_run() {
     echo "[*] Running $bin_out with ${RUN_TIMEOUT}s timeout"
   } > "$run_log"
 
-  if ! timeout "${RUN_TIMEOUT}s" "$bin_out" >> "$run_log" 2>&1
-  then
-     run_rc=$?
-  else
-    run_rc=0
-  fi
-
+  (timeout "${RUN_TIMEOUT}s" "$bin_out") >> "$run_log" 2>&1
+  run_rc=$?
+  
   local run_res
   run_res=$(interpret_result "$run_rc" "$run_log")
   if grep -Eq "error:" "$run_log"; then
@@ -261,9 +271,9 @@ do_compile_and_run() {
   # store the run outcome in an array
   EXECUTION_EXPLANATIONS["$compiler_name"]="$run_res"
 
-  if [[ "$run_res" != "OK" ]]; then
+  if [[ "$run_res" == Fail* ]]; then
       local snippet
-      snippet=$(sed -n '3,6p' "$compile_log")
+      snippet=$(sed -n '3,6p' "$run_log")
       EXECUTION_EXPLANATIONS["$compiler_name"]+=" => (Reason)\n$snippet"
   fi
 }
@@ -303,14 +313,13 @@ for f in "$FUZZED_DIR"/*; do
     COMPILATION_EXPLANATIONS["$cc"]=""
     EXECUTION_EXPLANATIONS["$cc"]=""
   done
-  echo "denemeee"
 
   # For each compiler => compile & run
   for cpath in "${COMPILERS[@]}"; do
     do_compile_and_run "$cpath" "$local_source" "$mutated_flags" "$out_base"
   done
 
-  # Print the final summary in your desired format:
+  # Print the final summary
 
   # 1) Compilation results
   echo >> "$DIFF_REPORT"
@@ -327,7 +336,7 @@ for f in "$FUZZED_DIR"/*; do
   for order in "gcc-14" "gcc-11" "llvm-19"; do
     outcome="${COMPILATION_EXPLANATIONS["$order"]}"
     # if it starts with "Fail" or "Timeout", we print the snippet
-    if [[ "$outcome" == Fail* || "$outcome" == Timeout* ]]; then
+    if [[ "$outcome" == Fail* || "$outcome" == Timeout* || "$outcome" == Crashed* ]]; then
       echo "---------------------------------------------------------------------------------------------------" >> "$DIFF_REPORT"
       echo "why $order could not compile?" >> "$DIFF_REPORT"
       echo -e "$outcome" >> "$DIFF_REPORT"
@@ -347,7 +356,7 @@ for f in "$FUZZED_DIR"/*; do
   done
   for order in "gcc-14" "gcc-11" "llvm-19"; do
     outcome="${EXECUTION_EXPLANATIONS["$order"]}"
-    if [[ "$outcome" == Fail* || "$outcome" == Timeout* ]]; then
+    if [[ "$outcome" == Fail* || "$outcome" == Timeout* || "$outcome" == Crashed* ]]; then
       echo "---------------------------------------------------------------------------------------------------" >> "$DIFF_REPORT"
       echo "why $order could not execute?" >> "$DIFF_REPORT"
       echo -e "$outcome" >> "$DIFF_REPORT"
@@ -359,24 +368,110 @@ for f in "$FUZZED_DIR"/*; do
       echo >> "$DIFF_REPORT"
     fi
   done
-  # If any compilers failed or timed out, print the reason
-  for order in "gcc-14" "gcc-11" "llvm-19"; do
-    outcome="${EXECUTION_EXPLANATIONS["$order"]}"
-    if [[ "$outcome" == Fail* || "$outcome" == Timeout* ]]; then
-      echo "---------------------------------------------------------------------------------------------------" >> "$DIFF_REPORT"
-      echo "why $order could not execute?" >> "$DIFF_REPORT"
-      echo -e "$outcome" >> "$DIFF_REPORT"
-      echo >> "$DIFF_REPORT"
-    elif [ "$outcome" == "(No-Execution)" ]; then
-      echo "---------------------------------------------------------------------------------------------------" >> "$DIFF_REPORT"
-      echo "why $order had no execution? => possibly compilation failed" >> "$DIFF_REPORT"
-      echo >> "$DIFF_REPORT"
-    fi
+  
+  #############################################################################
+  # Copy logs for Crash / Timeout compilers to specialized folders
+  #############################################################################
+  # We'll also produce a mini-report in those folders:
+  # ----------------------------------------------------------
+# 1) Check if any compiler crashed or timed out
+# ----------------------------------------------------------
+crash_found=0
+hang_found=0
+
+for cc in "gcc-14" "gcc-11" "llvm-19"; do
+  comp_outcome="${COMPILATION_EXPLANATIONS[$cc]}"
+  exec_outcome="${EXECUTION_EXPLANATIONS[$cc]}"
+  # If either comp_outcome or exec_outcome contains "Crashed-with-signal"
+  if [[ "$comp_outcome" = Crashed-with-signal* || "$exec_outcome" = Crashed-with-signal* ]]; then
+    crash_found=1
+  fi
+  # If either is "Timeout", mark hang
+  if [[ "$comp_outcome" == Timeout* || "$exec_outcome" == Timeout* ]]; then
+    hang_found=1
+  fi
+done
+
+if [ $crash_found -eq 1 ]; then
+  # We'll copy logs for *all compilers* to a single folder for this case
+  crash_folder="$CRASH_DIR/$out_base"
+  mkdir -p "$crash_folder"
+
+  # Create or append the mini-report
+  mini_report="$crash_folder/mini-report.txt"
+  {
+    echo "=== Crash mini-report for case $out_base ==="
+    echo "All compiler outcomes for this case:"
+    echo "All compiler outcomes for this case (compilation + execution), plus logs"
+  } >> "$mini_report"
+
+  for cc in "gcc-14" "gcc-11" "llvm-19"; do
+    comp_outcome="${COMPILATION_EXPLANATIONS[$cc]}"
+    exec_outcome="${EXECUTION_EXPLANATIONS[$cc]}"
+    compile_log="$OUT_DIR/$out_base-$cc.compile.log"
+    run_log="$OUT_DIR/$out_base-$cc.run.log"
+
+    # Copy logs
+    cp -v "$compile_log" "$crash_folder" 2>/dev/null || true
+    cp -v "$run_log" "$crash_folder" 2>/dev/null || true
+
+    # Summarize outcomes
+    echo "Compiler: $cc" >> "$mini_report"
+    echo "  Compilation => $comp_outcome" >> "$mini_report"
+    echo "  Execution   => $exec_outcome" >> "$mini_report"
+    echo "" >> "$mini_report"
+
+    echo "---- $cc compile log (first 10 lines) ----" >> "$mini_report"
+    sed -n '1,10p' "$compile_log" >> "$mini_report" 2>/dev/null
+    echo "" >> "$mini_report"
+    echo "---- $cc run log (first 10 lines) ----" >> "$mini_report"
+    sed -n '1,10p' "$run_log" >> "$mini_report" 2>/dev/null
+    echo "" >> "$mini_report"
   done
+
+  echo "Detailed logs: $crash_folder" >> "$CRASH_REPORT"
+  echo "Case: $out_base" >> "$CRASH_REPORT"
+  echo "" >> "$CRASH_REPORT"
+fi
+
+if [ $hang_found -eq 1 ]; then
+  hang_folder="$HANG_DIR/$out_base"
+  mkdir -p "$hang_folder"
+  mini_report="$hang_folder/mini-report.txt"
+  {
+    echo "=== Hang mini-report for case $out_base ==="
+    echo "All compiler outcomes for this case:"
+  } >> "$mini_report"
+
+  for cc in "gcc-14" "gcc-11" "llvm-19"; do
+    comp_outcome="${COMPILATION_EXPLANATIONS[$cc]}"
+    exec_outcome="${EXECUTION_EXPLANATIONS[$cc]}"
+    compile_log="$OUT_DIR/$out_base-$cc.compile.log"
+    run_log="$OUT_DIR/$out_base-$cc.run.log"
+
+    cp -v "$compile_log" "$hang_folder" 2>/dev/null || true
+    cp -v "$run_log" "$hang_folder" 2>/dev/null || true
+
+    echo "Compiler: $cc" >> "$mini_report"
+    echo "  Compilation => $comp_outcome" >> "$mini_report"
+    echo "  Execution   => $exec_outcome" >> "$mini_report"
+    echo "" >> "$mini_report"
+
+    echo "---- $cc compile log (first 10 lines) ----" >> "$mini_report"
+    sed -n '1,10p' "$compile_log" >> "$mini_report" 2>/dev/null
+    echo "" >> "$mini_report"
+    echo "---- $cc run log (first 10 lines) ----" >> "$mini_report"
+    sed -n '1,10p' "$run_log" >> "$mini_report" 2>/dev/null
+    echo "" >> "$mini_report"
+  done
+
+  echo "Detailed logs: $hang_folder" >> "$HANG_REPORT"
+  echo "Case: $out_base" >> "$HANG_REPORT"
+  echo "" >> "$HANG_REPORT"
+fi
 
   ###############################################################################
   # Remove the "[*] Running ..." lines from all run logs for clarity
-  # (Insert this step after the runs have completed)
   ###############################################################################
   for order in "gcc-14" "gcc-11" "llvm-19"; do
     run_log="$OUT_DIR/$out_base-$order.run.log"
@@ -386,48 +481,94 @@ for f in "$FUZZED_DIR"/*; do
     fi
   done
 
-  ###############################################################################
-  # Pairwise compare for "OK" compilers (execution stage)
-  ###############################################################################
-  declare -a ok_compilers=()
-  for order in "gcc-14" "gcc-11" "llvm-19"; do
-    outcome="${EXECUTION_EXPLANATIONS["$order"]}"
-    if [[ "$outcome" == "OK" ]]; then
-      ok_compilers+=("$order")
-    fi
-  done
+  #############################################################################
+  # Pairwise compare *all compilers that have run logs*, not just OK
+  #############################################################################
+  declare -a run_compilers=()
+for order in "gcc-14" "gcc-11" "llvm-19"; do
+  outcome="${EXECUTION_EXPLANATIONS["$order"]}"
+  if [ -n "$outcome" ] && [ "$outcome" != "(No-Execution)" ]; then
+    run_compilers+=("$order")
+  fi
+done
 
-  echo >> "$DIFF_REPORT"
-  echo "#--------------------------------------------------------------------------------------------------" >> "$DIFF_REPORT"
-  mismatch_detected=0
-  if [ "${#ok_compilers[@]}" -gt 1 ]; then
-    # We have at least 2 compilers with "OK" => do pairwise diff
-    for ((i=0; i<${#ok_compilers[@]}-1; i++)); do
-      for ((j=i+1; j<${#ok_compilers[@]}; j++)); do
-        cA="${ok_compilers[$i]}"
-        cB="${ok_compilers[$j]}"
+mismatch_detected=0
+if [ "${#run_compilers[@]}" -gt 1 ]; then
+  for ((i=0; i<${#run_compilers[@]}-1; i++)); do
+    for ((j=i+1; j<${#run_compilers[@]}; j++)); do
+      cA="${run_compilers[$i]}"
+      cB="${run_compilers[$j]}"
+      outcomeA="${EXECUTION_EXPLANATIONS[$cA]}"
+      outcomeB="${EXECUTION_EXPLANATIONS[$cB]}"
+
+      # 1) If one crashed and the other did not, mismatch
+      if [[ "$outcomeA" = Crashed-with-signal* || "$outcomeB" = Crashed-with-signal* ]] &&
+         [[ "$outcomeA" != "$outcomeB" ]]; then
+        mismatch_detected=1
+        echo "[Mismatch] $cA vs $cB (crash vs non-crash)" >> "$DIFF_REPORT"
+      else
+        # 2) Otherwise, check logs if they both have .run.log
         logA="$OUT_DIR/$out_base-$cA.run.log"
         logB="$OUT_DIR/$out_base-$cB.run.log"
-
         if [[ -f "$logA" && -f "$logB" ]]; then
           if ! diff -q "$logA" "$logB" >/dev/null 2>&1; then
             mismatch_detected=1
             echo "[Mismatch] $cA vs $cB" >> "$DIFF_REPORT"
           fi
         fi
-      done
+      fi
     done
-  fi
+  done
+fi
 
-  if [ "${#ok_compilers[@]}" -ge 2 ] && [ "$mismatch_detected" -eq 0 ]; then
-    echo "**All match among OK compilers" >> "$DIFF_REPORT"
-  fi
-  echo "#--------------------------------------------------------------------------------------------------" >> "$DIFF_REPORT"
+if [ "$mismatch_detected" -eq 1 ]; then
+    echo "[Mismatch found for case $out_base]" >> "$DIFF_REPORT"
+    mismatch_folder="$MISMATCH_DIR/$out_base"
+    mkdir -p "$mismatch_folder"
+
+    # Copy compile + run logs for ALL compilers
+    mini_report="$mismatch_folder/mini-report.txt"
+    {
+      echo "=== Mismatch mini-report for case $out_base ==="
+      echo "All compilers in run_compilers: ${run_compilers[*]}"
+      echo "Storing compile + run logs for each to $mismatch_folder"
+      echo ""
+    } >> "$mini_report"
+
+    for cc in "gcc-14" "gcc-11" "llvm-19"; do
+     comp_outcome="${COMPILATION_EXPLANATIONS[$cc]}"
+     exec_outcome="${EXECUTION_EXPLANATIONS[$cc]}"
+     compile_log="$OUT_DIR/$out_base-$cc.compile.log"
+     run_log="$OUT_DIR/$out_base-$cc.run.log"
+
+      cp -v "$compile_log" "$mismatch_folder" 2>/dev/null || true
+      cp -v "$run_log" "$mismatch_folder" 2>/dev/null || true
+
+      echo "Compiler: $cc" >> "$mini_report"
+      echo "  Compilation => $comp_outcome" >> "$mini_report"
+      echo "  Execution   => $exec_outcome" >> "$mini_report"
+      echo "" >> "$mini_report"
+
+      echo "---- $cc compile log (first 10 lines) ----" >> "$mini_report"
+      sed -n '1,10p' "$compile_log" >> "$mini_report" 2>/dev/null
+      echo "" >> "$mini_report"
+
+      echo "---- $cc run log (first 10 lines) ----" >> "$mini_report"
+      sed -n '1,10p' "$run_log" >> "$mini_report" 2>/dev/null
+      echo "" >> "$mini_report"
+    done
+
+    {
+      echo "== Mismatch for $out_base =="
+      echo "Logs copied to $mismatch_folder"
+    } >> "$MISMATCH_REPORT"
+else
+  echo "**All matched among those successfully compiled**" >> "$DIFF_REPORT"
+fi
   
 done
 
 echo "" >> "$DIFF_REPORT"
 echo "=== End of Differential Testing ===" >> "$DIFF_REPORT"
 echo "Report saved to $DIFF_REPORT"
-
-#./diff_test_report.sh ~/output-afl-exp23/default/queue/ diff-test-out
+#./test10.sh small-queue/ 10-diff-test-out
