@@ -23,13 +23,15 @@ configuration=$4
 target=$5 # clang or clang-options
 
 # input folder, output folder, AFL can be fixed
-./run_AFL_conf_$3.sh $input $output-$configuration-$round 0 $target > afl-$configuration-$round.txt 2>&1 &
+mkdir -p ~/afl-$configuration-$round-objects-NoDB-24 
+cd ~/afl-$configuration-$round-objects-NoDB-24
+~/run_AFL_conf_1.sh $input $output-$configuration-$round-NoDB-24 0 $target > afl-$configuration-$round.txt 2>&1 &
 
 # Capture the process ID of the background process
 script_pid=$!
 
 # Sleep for 24 hours
-sleep 600
+sleep 86400
 
 # Kill the script after 60 minutes
 kill_script $script_pid
