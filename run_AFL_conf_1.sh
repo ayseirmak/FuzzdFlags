@@ -16,12 +16,12 @@ fi
 
 if [ "$resume" -eq 1 ]; then
     # Resume fuzzing
-    AFL_DEBUG=1 AFL_USE_ASAN=0 AFL_DEBUG_CHILD_OUTPUT=1 AFL_SHUFFLE_QUEUE=1 \
+    AFL_USE_ASAN=0 AFL_DEBUG_CHILD_OUTPUT=1 AFL_SHUFFLE_QUEUE=1 \
 AFL_AUTORESUME=1 AFL_I_DONT_CARE_ABOUT_MISSING_CRASHES=1  \
 afl-fuzz -m none -t 500 -T 10 -i $input -o $output -- $targetbin --filebin @@
 else
     # Starts a new fuzzing
-    AFL_DEBUG=1 AFL_USE_ASAN=0 AFL_DEBUG_CHILD_OUTPUT=1 AFL_SHUFFLE_QUEUE=1 \
+    AFL_USE_ASAN=0 AFL_DEBUG_CHILD_OUTPUT=1 AFL_SHUFFLE_QUEUE=1 \
 AFL_I_DONT_CARE_ABOUT_MISSING_CRASHES=1 \
 afl-fuzz -m none -t 500 -T 10 -i $input -o $output -- $targetbin --filebin @@ 
 fi
@@ -51,14 +51,14 @@ fi
 
 if [ "$resume" -eq 1 ]; then
     # Resume fuzzing
-    AFL_DEBUG=1 AFL_USE_ASAN=0 AFL_DEBUG_CHILD_OUTPUT=1 AFL_SHUFFLE_QUEUE=1 \
+   AFL_USE_ASAN=0 AFL_DEBUG_CHILD_OUTPUT=1 AFL_SHUFFLE_QUEUE=1 \
 AFL_AUTORESUME=1 AFL_I_DONT_CARE_ABOUT_MISSING_CRASHES=1  \
 afl-fuzz -m none -t 500 -T 10 -i $input -o $output -- $targetbin -x c -c -O3 -fpermissive \
 -w -Wno-implicit-function-declaration -Wno-implicit-int -Wno-return-type -Wno-builtin-redeclared -Wno-int-conversion \
 -target x86_64-linux-gnu -march=native -I/usr/include -I/users/user42/llvmSS-include @@ 
 else
     # Starts a new fuzzing
-    AFL_DEBUG=1 AFL_USE_ASAN=0 AFL_DEBUG_CHILD_OUTPUT=1 AFL_SHUFFLE_QUEUE=1 \
+    AFL_USE_ASAN=0 AFL_DEBUG_CHILD_OUTPUT=1 AFL_SHUFFLE_QUEUE=1 \
 AFL_I_DONT_CARE_ABOUT_MISSING_CRASHES=1 \
 afl-fuzz -m none -t 500 -T 10 -i $input -o $output -- $targetbin -x c -c -O3 -fpermissive \
 -w -Wno-implicit-function-declaration -Wno-implicit-int -Wno-return-type -Wno-builtin-redeclared -Wno-int-conversion \
