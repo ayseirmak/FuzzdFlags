@@ -1,0 +1,231 @@
+#!/usr/bin/env bash
+
+################################################################################
+# FuzzdFlag - main driver for fuzzing or differential testing
+#
+# Usage:
+#   FuzzdFlag -fuzz <c-dir> <include-dir> <time-seconds> [--conf <run_conf_script>]
+#   FuzzdFlag -difftest <fuzzed_queue_dir> <diff_out_dir>
+################################################################################
+
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+
+show_usage() {
+  echo "Usage:"
+  echo "  . $0 -fuzz <c-dir> <include-dir> <time-seconds> [--conf <run_conf_script>] [--no-cmin]"
+  echo "    * Minimizes c-files (afl-cmin) unless --no-cmin is given."
+  echo "    * Reindexes them, then starts fuzzing for <time-seconds> with optional custom conf script."
+  echo ""
+  echo "  . $0 -difftest <fuzzed_queue/crash/hang_dir> <diff_out_dir>"
+  echo "    * Performs differential testing on fuzzing queue/crash/hang directories"
+  echo ""
+  echo "Examples:"
+  echo "  . $0 -fuzz /abs_path/to/c-files /abs_path/to/include 3600"
+  echo "  . $0 -difftest /abs_path/to/fuzz-output/queue  /abs_path/to/diff_test_out"
+  echo "___________________________________________________________________________________________________"
+  echo "Please check that you have exported INSTRUMENTED_CLANG_PATH and INSTRUMENTED_CLANG_OPTIONS_PATH as:"
+  echo "[*]export INSTRUMENTED_CLANG_PATH="/abs/path/to/instrumented/clang-binary""
+  echo "[*]export INSTRUMENTED_CLANG_OPTIONS_PATH="/abs/path/to/instrumented/clang-options-binary""
+  echo "___________________________________________________________________________________________________"
+
+}
+
+if [ $# -lt 1 ]; then
+  show_usage
+  exit 1
+fi
+################################################################################
+# Parse Subcommand
+################################################################################
+
+SUBCOMMAND="$1"
+shift
+
+case "$SUBCOMMAND" in
+-fuzz)
+    if [ $# -lt 3 ]; then
+      echo "Error: not enough args for '-fuzz'"
+      show_usage
+      exit 1
+    fi
+    CFILES_DIR="$1"       # e.g. /users/user42/before-Cmin-cfiles
+    INCLUDES_DIR="$2"     # e.g. /users/user42/include-files
+    FUZZ_TIME="$3"        # e.g. 600
+    shift 3
+
+    # Optional: parse the optional --conf <script> arg
+    RUN_CONF_SCRIPT=""  # e.g. run_AFL_conf_default.sh is the default
+    NO_CMIN=0            # 0 => do afl-cmin, 1 => skip
+
+    while [ $# -gt 0 ]; do
+      case "$1" in
+        --conf)
+          RUN_CONF_SCRIPT="${SCRIPT_DIR}/$2"
+          shift 2
+          ;;
+        --no-cmin)
+          NO_CMIN=1
+          shift
+          ;;
+        *)
+          echo "Unknown extra argument: $1"
+          exit 1
+          ;;
+      esac
+    done
+
+    # If no conf script provided, default to run_AFL_conf_default.sh
+    if [ -z "$RUN_CONF_SCRIPT" ]; then
+      RUN_CONF_SCRIPT="${SCRIPT_DIR}/run_AFL_conf_default.sh"
+    fi
+    echo ' '
+    echo "== Fuzz Mode =="
+    echo "[*]C-files dir: $CFILES_DIR"
+    echo "[*]Include dir: $INCLUDES_DIR"
+    echo "[*]Fuzz time: $FUZZ_TIME seconds"
+    echo "[*]Run conf script: $RUN_CONF_SCRIPT"
+    echo "[*]INSTRUMENTED_CLANG_PATH is [$INSTRUMENTED_CLANG_PATH]"
+    echo "[*]INSTRUMENTED_CLANG_OPTIONS_PATH is [$INSTRUMENTED_CLANG_OPTIONS_PATH]"
+    if [ -z "${INSTRUMENTED_CLANG_PATH:-}" ]; then
+      echo "[!]Please set INSTRUMENTED_CLANG_PATH env variable, e.g. /users/user42/build-test/bin/clang => export INSTRUMENTED_CLANG_PATH="/users/user42/build-test/bin/clang""
+      exit 1
+    fi
+    if [ -z "${INSTRUMENTED_CLANG_OPTIONS_PATH:-}" ]; then
+      echo "[!]Please set INSTRUMENTED_CLANG_OPTIONS_PATH env variable, e.g. /users/user42/build-test/bin/clang-options => export INSTRUMENTED_CLANG_OPTIONS_PATH="/users/user42/build-test/bin/clang-options""
+      exit 1
+    fi
+    ############################################################################
+    # Step 2) run afl-cmin to minimize corpus
+    ############################################################################
+    if [ "$NO_CMIN" -eq 0 ]; then
+      echo "== Step: Running afl-cmin to reduce corpus =="
+      mkdir -p "${SCRIPT_DIR}/afl-cmin"
+      pushd "${SCRIPT_DIR}/afl-cmin" >/dev/null
+      echo "[*]Running afl-cmin to reduce corpus"
+
+      AFL_DEBUG=1 AFL_USE_ASAN=0 AFL_PRINT_FILENAMES=1 AFL_DEBUG_CHILD_OUTPUT=1 \
+        afl-cmin \
+          -i "$CFILES_DIR" \
+          -o ./after-Cmin-cfiles \
+          -m none -t 500 -T 12 \
+          -- "$INSTRUMENTED_CLANG_PATH" -x c -c -O3 -fpermissive \
+            -w -Wno-implicit-function-declaration -Wno-implicit-int -Wno-return-type -Wno-builtin-redeclared -Wno-int-conversion \
+            -target x86_64-linux-gnu -march=native -I/usr/include -I"$INCLUDES_DIR" \
+            @@ -o /dev/null 2>&1 | tee ./afl-cmin-errors.log
+
+      popd >/dev/null
+      # Check that afl-cmin produced the minimized corpus folder
+      if [ -d "${SCRIPT_DIR}/afl-cmin/after-Cmin-cfiles"]; then
+        echo "Minimized corpus created at: ${SCRIPT_DIR}/afl-cmin/after-Cmin-cfiles"
+        # Optional: show a summary (like how many files)
+        file_count="$(find "${SCRIPT_DIR}/afl-cmin/after-Cmin-cfiles" -type f | wc -l)"
+        echo "Total files in minimized corpus: $file_count"
+      else
+        echo "[!]ERROR: afl-cmin did not produce 'afl-cmin/after-Cmin-cfiles'!"
+        echo "[!]Check afl-cmin-errors.log for details."
+        exit 1
+      fi
+      echo "== 3) Reindexing minimized .c files with absolute paths =="
+    else
+    echo "== Skipping afl-cmin step (using user-supplied corpus directly) =="
+    fi
+    
+    ############################################################################
+    # Step 3) reindex the minimized .c files => rename test_0.c, test_1.c, ...
+    ############################################################################
+    # Ensure ~/reindex-cfiles is clean
+    mkdir -p "${SCRIPT_DIR}/reindex-cfiles"
+    rm -f "${SCRIPT_DIR}/reindex-cfiles"/*
+
+
+    if [ "$NO_CMIN" -eq 0 ]; then
+      echo "[*] Reindexing from afl-cmin/after-Cmin-cfiles ..."
+      pushd "${SCRIPT_DIR}/afl-cmin/after-Cmin-cfiles" >/dev/null
+    else
+      echo "[*] Reindexing from user-supplied CFILES_DIR = $CFILES_DIR ..."
+      pushd "$CFILES_DIR" >/dev/null
+    fi
+
+    # 1) Copy files as test_0.c, test_1.c, ...
+    find "$(pwd)" -type f -name "*.c" | sort | awk -v reindex="${SCRIPT_DIR}/reindex-cfiles" '{
+    printf "cp \"%s\" \"%s/test_%d.c\"\n", $0, reindex, (NR-1)
+    }' | bash
+
+    popd >/dev/null
+
+    ##############################################################################
+    # Produce a mapping file referencing absolute paths
+    ##############################################################################
+    echo "[*] Generating c-file mapping in ./c_name_index_mapping.txt"
+
+    if [ "$NO_CMIN" -eq 0 ]; then
+      pushd afl-cmin/after-Cmin-cfiles >/dev/null
+    else
+      pushd "$CFILES_DIR" >/dev/null
+    fi
+
+    # Each line:  test_0.c : /abs/path/to/foo.c
+    find "$(pwd)" -type f -name "*.c" | sort | awk '{
+    printf "test_%d.c : %s\n", (NR-1), $0
+    }' > "${SCRIPT_DIR}/c_name_index_mapping.txt"
+
+    popd >/dev/null
+
+    echo "[*] Done. Reindexed .c files in reindex-cfiles and created c_name_index_mapping.txt"
+
+    export CFILE_PATH="${SCRIPT_DIR}/reindex-cfiles"
+    echo "[*] CFILE_PATH updated as $CFILE_PATH"
+    ############################################################################
+    # Now count how many .c files in reindex-cfiles => FILE_COUNT
+    # Export environment variables for clang-options usage
+    ############################################################################
+    file_count="$(find "${SCRIPT_DIR}/reindex-cfiles" -type f -name "*.c" | wc -l)"
+    echo "[*] Found $file_count .c files in reindex-cfiles"
+
+    # clang-options expects these env vars
+    export CFILES_DIR="${SCRIPT_DIR}/reindex-cfiles"
+    export FILE_COUNT="$file_count"
+    export INCLUDES_DIR="$INCLUDES_DIR"
+
+    echo "[*] Exporting environment variables for clang-options usage..."
+    echo "   CFILES_DIR=$CFILES_DIR"
+    echo "   FILE_COUNT=$FILE_COUNT"
+    echo "   INCLUDES_DIR=$INCLUDES_DIR"
+    echo "   INSTRUMENTED_CLANG_PATH=$INSTRUMENTED_CLANG_PATH"
+    
+    ############################################################################
+    # Step 4) Launch fuzzing
+    ############################################################################
+    echo "== 4) Launch fuzzing =="
+    timestamp="$(date +%Y%m%d_%H%M%S)"
+    FUZZ_OUT="${SCRIPT_DIR}/Fuzz-output-${timestamp}"
+    mkdir -p "$FUZZ_OUT"
+    echo "[*]Fuzzing output directory: $FUZZ_OUT"
+
+    echo "[*]INSTRUMENTED_CLANG_OPTIONS_PATH is [$INSTRUMENTED_CLANG_OPTIONS_PATH]"
+    if [ -z "${INSTRUMENTED_CLANG_OPTIONS_PATH:-}" ]; then
+      # default to $HOME/build-test/bin/clang-options
+      export INSTRUMENTED_CLANG_OPTIONS_PATH="${HOME}/build-test/bin/clang-options"
+      echo "[*]No INSTRUMENTED_CLANG_OPTIONS_PATH set, using default: $INSTRUMENTED_CLANG_OPTIONS_PATH"
+    fi
+
+    bash "${SCRIPT_DIR}/custom_fuzz.sh" \
+      "${SCRIPT_DIR}/input-seeds" \
+      "$FUZZ_OUT" \
+      "$RUN_CONF_SCRIPT" \
+      "$INSTRUMENTED_CLANG_OPTIONS_PATH" \
+      "$FUZZ_TIME"
+    ##Generate fuzzing process info
+
+    # 4) Generate fuzz report
+    echo "== Step: Generate fuzz analysis report =="
+    python3 "${SCRIPT_DIR}/fuzz_report.py" "$FUZZ_OUT/default"
+    rc=$? 
+    if [ "$rc" -eq 0 ]; then
+      echo "*]Report successfully generated. Found in $FUZZ_OUT"
+    else
+      echo "[!]Fail($rc)"
+      echo "[!]Report generation interrupted"
+    fi
+    rm -rf object-folder
+esac
