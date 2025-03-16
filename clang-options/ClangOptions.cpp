@@ -186,7 +186,7 @@ static const std::vector<std::string> flagList = {
 "-fwhole-program-vtables",
 "-fwrapv",
 "-fwritable-strings",
-"-malign-double¶",
+"-malign-double",
 "-march=x86-64"
 };
 
@@ -206,8 +206,6 @@ static std::string getFixedFlags() {
     // Let INCLUDES_DIR override the second -I path
     //  fallback = "/users/user42/llvmSS-include"
     std::string includesDir = getEnvOrDefault("INCLUDES_DIR", "/users/user42/llvmSS-include");
-    std::cout << "INCLUDES_DIR: " << includesDir << std::endl;
-
     baseFlags += " -I" + includesDir;
 
     return baseFlags;
@@ -247,12 +245,10 @@ std::string decodeFlagsFromBinary(const std::vector<uint8_t> &data) {
 
 // Only 2 bytes now! We mod by 2505 to map to test_0.c..test_2504.c
 std::string generateTestFileName(const std::vector<uint8_t> &data) {
-    std::string testFilesDir = getEnvOrDefault("CFILES_DIR", "/users/user42/llvmSS-reindex-cfiles/");
-    std::cout << "CFILES_DIR: " << testFilesDir << std::endl;
-
+    std::string testFilesDir = getEnvOrDefault("CFILES_DIR", "/users/user42/llvmSS-reindex-cfiles");
     // If fewer than 2 bytes, fallback to "hello.c"
     if (data.size() < 2) {
-        return testFilesDir + "test_1.c";
+        return testFilesDir + "/test_1.c";
     }
 
     // Build 16-bit integer from the first 2 bytes
@@ -261,14 +257,12 @@ std::string generateTestFileName(const std::vector<uint8_t> &data) {
     rawValue |= static_cast<uint16_t>(data[1]) << 8;
 
     // 2,505 .c files → mod 2,505
-    uint16_t fileCount = getEnvOrDefaultInt("FILE_COUNT", 1706);
-    std::cout << "FILE_COUNT: " << fileCount << std::endl;
-    
+    uint16_t fileCount = getEnvOrDefaultInt("FILE_COUNT", 1706);    
     uint16_t fileIndex = rawValue % fileCount;
 
     // Construct filename (e.g. test_1234.c)
     char buffer[32];
-    snprintf(buffer, sizeof(buffer), "test_%u.c", fileIndex);
+    snprintf(buffer, sizeof(buffer), "/test_%u.c", fileIndex);
     return testFilesDir + std::string(buffer);
 }
 
@@ -303,9 +297,7 @@ int runClangCompilation(const std::string &sourceFile, const std::string &flags)
         new clang::TextDiagnosticPrinter(llvm::errs(), diagOpts.get())
     );
 
-    std::string compilerPath = getEnvOrDefault("INSTRUMENTED_CLANG_PATH", "/users/user42/bin/clang");
-    std::cout << "INSTRUMENTED_CLANG_PATH: " << compilerPath << std::endl;
-    
+    std::string compilerPath = getEnvOrDefault("INSTRUMENTED_CLANG_PATH", "/users/user42/bin/clang");    
     clang::driver::Driver driver(compilerPath, llvm::sys::getDefaultTargetTriple(), *diags);
 
     std::vector<std::string> args = { compilerPath, "-x", "c", sourceFile };
