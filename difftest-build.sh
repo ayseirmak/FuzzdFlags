@@ -35,3 +35,23 @@ clang version 21.0.0git (https://github.com/llvm/llvm-project.git 605a9f590d91a4
 Target: x86_64-unknown-linux-gnu
 Thread model: posix
 InstalledDir: /users/user42/llvm-latest/llvm-trunk-build/bin
+
+#user42@node0:~$ ldd llvm-latest/llvm-trunk-build/bin/clang
+#        linux-vdso.so.1 (0x00007ffcb3955000)
+#        libz.so.1 => /lib/x86_64-linux-gnu/libz.so.1 (0x00007f7265800000)
+#        libstdc++.so.6 => /lib/x86_64-linux-gnu/libstdc++.so.6 (0x00007f7265593000)
+#        libm.so.6 => /lib/x86_64-linux-gnu/libm.so.6 (0x00007f72654ac000)
+#        libgcc_s.so.1 => /lib/x86_64-linux-gnu/libgcc_s.so.1 (0x00007f7265488000)
+#        libc.so.6 => /lib/x86_64-linux-gnu/libc.so.6 (0x00007f726525f000)
+#        /lib64/ld-linux-x86-64.so.2 (0x00007f726d06f000)
+
+#user42@node0:~/build-test$ ldd ./bin/clang-options 
+#        linux-vdso.so.1 (0x00007ffdce993000)
+#        libm.so.6 => /lib/x86_64-linux-gnu/libm.so.6 (0x00007fa372c97000)
+#        libz.so.1 => /lib/x86_64-linux-gnu/libz.so.1 (0x00007fa372c7b000)
+#        libtinfo.so.6 => /lib/x86_64-linux-gnu/libtinfo.so.6 (0x00007fa372c49000)
+#        libstdc++.so.6 => /lib/x86_64-linux-gnu/libstdc++.so.6 (0x00007fa3729dc000)
+#        libgcc_s.so.1 => /lib/x86_64-linux-gnu/libgcc_s.so.1 (0x00007fa3729b8000)
+#        libc.so.6 => /lib/x86_64-linux-gnu/libc.so.6 (0x00007fa37278d000)
+#        /lib64/ld-linux-x86-64.so.2 (0x00007fa374cb4000)
+
