@@ -9,12 +9,15 @@ def main():
         sys.exit(1)
 
     output_dir = sys.argv[1]
-
+    parent_folder = os.path.basename(os.path.dirname(output_dir))
+    timestamp = parent_folder.replace("Fuzz-output-", "")
+    report_filename = f"fuzz_analysis_report_{timestamp}"
     # Subdirectories typically used by AFL++
     crash_dir = os.path.join(output_dir, "crashes")
     hang_dir = os.path.join(output_dir, "hangs")
     queue_dir = os.path.join(output_dir, "queue")
-    report_file ="/users/user42/fuzz_report.txt"
+    #report_file =os.path.join(output_dir, ".." , "fuzz_analysis_report")
+    report_file =os.path.join(os.path.dirname(output_dir), report_filename)
     fuzzer_stats_path = os.path.join(output_dir, "fuzzer_stats")
 
     fstats = parse_fuzzer_stats(fuzzer_stats_path)
@@ -107,7 +110,7 @@ def main():
             "-march=native",
             "-I/usr/include",
             # Adjust if clang-options prints a different include path
-            "-I/users/user42/input-include",
+            "-I/users/user42/llvmSS-include",
         }
 
         file_name_count = {}  # e.g. {"/path/to/test_97.c": 3, ...}
@@ -125,11 +128,16 @@ def main():
         if os.path.isdir(queue_dir):
             for fname in sorted_non_readme_files(queue_dir):
                 full_path = os.path.join(queue_dir, fname)
-
+                print(full_path)
                 # Distinguish seeds by checking if the file name has e.g. "orig:seedX.bin"
                 # Adjust the pattern if your seeds differ (e.g. "orig:seed10.bin")
                 is_seed_file, seed_name = check_if_seed_file(fname)
-
+                clang_options_path = os.environ.get("INSTRUMENTED_CLANG_OPTIONS_PATH")
+                if not clang_options_path:
+                    print("[!]ERROR: Environment variable INSTRUMENTED_CLANG_OPTIONS_PATH is not set.")
+                    print("[!]Please set it, e.g.:")
+                    print("[!]export INSTRUMENTED_CLANG_OPTIONS_PATH=/path/to/clang-options")
+                    sys.exit(1)
                 # Run clang-options in checker mode
                 result = subprocess.run(
                     ["/users/user42/build-test/bin/clang-options", "--checker", "--filebin", full_path],
@@ -137,6 +145,11 @@ def main():
                     text=True
                 )
                 stdout = result.stdout
+                if result.returncode != 0:
+                    print("clang-options call failed.")
+                    print("stderr:", result.stderr)
+                else:
+                    print(f"For {full_path} clang-options called successfully")
 
                 # Extract the lines for source file and flags
                 source_file, all_flags = parse_clang_options_checker(stdout)
@@ -308,4 +321,3 @@ def sorted_non_readme_files(directory: str):
 
 if __name__ == "__main__":
     main()
-# python3 report2.py ~/output-afl-exp23/default
