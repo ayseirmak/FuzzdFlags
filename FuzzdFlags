@@ -12,18 +12,43 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
 show_usage() {
   echo "Usage:"
+  echo ""
   echo "  . $0 -fuzz <c-dir> <include-dir> <time-seconds> [--conf <run_conf_script>] [--no-cmin]"
   echo "    * Minimizes c-files (afl-cmin) unless --no-cmin is given."
-  echo "    * Reindexes them, then starts fuzzing for <time-seconds> with optional custom conf script."
+  echo "    * Reindexes them, then starts fuzzing for <time-seconds> with an optional custom conf script."
+  echo "    * Creates a afl-cmin-output-<timestamp> and reindex-output-<timestamp> folders automatically."
+  echo "    * Creates a fuzz-output-<timestamp> folder automatically."
+  echo "___________________________________________________________________________________________________"
   echo ""
-  echo "  . $0 -difftest <fuzzed_queue/crash/hang_dir> <diff_out_dir>"
-  echo "    * Performs differential testing on fuzzing queue/crash/hang directories"
+  echo "  . $0 -difftest <fuzzed_queue/crash/hang_dir> <diff_out_dir> <target_name> <target_cmp_path>"
+  echo "    * Performs differential testing on the fuzzed queue, crashes, or hangs directories."
+  echo "    * Creates a difftest-output-<timestamp> folder automatically."
+  echo "    * By default differential testing compiled with stable Gcc-14, Clang-18 and user-defined compiler"
+  echo "    * If you run -difftest in a different shell session than -fuzz, remember that previously"
+  echo "      exported environment variables may not be set anymore."
+  echo "    * Please export the following variables:"
+  echo "        INSTRUMENTED_CLANG_OPTIONS_PATH"
+  echo "        CFILES_DIR (the directory of reindexed C files)"
+  echo "        INCLUDES_DIR (the directory of includes which are mendotory for C files)"
+  echo "___________________________________________________________________________________________________"
+  echo ""
+  echo "  . $0 -f_ddebug <clang_path> <test_c_file> <combination_sizes> <flags...>"
+  echo "    * Performs flag-based delta debugging for a single .c file on a specified clang compiler."
+  echo "    * Generate log files as <test_c_basename>_<size>.log "
+  echo "    * If you run -f_ddebug in a different shell session than -fuzz or -difftest remember that previously"
+  echo "      exported environment variables may not be set anymore."
+  echo "    * Please export the following variables:"
+  echo "        INCLUDES_DIR (the directory of includes which are mendotory for C files)"
+  echo "___________________________________________________________________________________________________"
   echo ""
   echo "Examples:"
   echo "  . $0 -fuzz /abs_path/to/c-files /abs_path/to/include 3600"
-  echo "  . $0 -difftest /abs_path/to/fuzz-output/queue  /abs_path/to/diff_test_out"
+  echo "  . $0 -difftest /abs_path/to/fuzz-output/queue Clang-trunk /abs_path/to/target_cmp"
+  echo "  . $0 -f_ddebug /abs_path/to/target_cmp /abs_path/to/c-file \"1,2,3\" -O1 -O2 -fno-strict-return"
   echo "___________________________________________________________________________________________________"
-  echo "Please check that you have exported INSTRUMENTED_CLANG_PATH and INSTRUMENTED_CLANG_OPTIONS_PATH as:"
+  echo ""
+  echo "NOTE: Make sure you have set the basic environment variables INSTRUMENTED_CLANG_PATH and"
+  echo "      INSTRUMENTED_CLANG_OPTIONS_PATH. For example:"
   echo "[*]export INSTRUMENTED_CLANG_PATH="/abs/path/to/instrumented/clang-binary""
   echo "[*]export INSTRUMENTED_CLANG_OPTIONS_PATH="/abs/path/to/instrumented/clang-options-binary""
   echo "___________________________________________________________________________________________________"
@@ -94,13 +119,18 @@ case "$SUBCOMMAND" in
       echo "[!]Please set INSTRUMENTED_CLANG_OPTIONS_PATH env variable, e.g. /users/user42/build-test/bin/clang-options => export INSTRUMENTED_CLANG_OPTIONS_PATH="/users/user42/build-test/bin/clang-options""
       exit 1
     fi
+    
+    timestamp="$(date +%Y%m%d_%H%M%S)"
+    OUTPUT_DIR="$(pwd)"
+    mkdir -p "${OUTPUT_DIR}"
     ############################################################################
     # Step 2) run afl-cmin to minimize corpus
     ############################################################################
     if [ "$NO_CMIN" -eq 0 ]; then
-      echo "== Step: Running afl-cmin to reduce corpus =="
-      mkdir -p "${SCRIPT_DIR}/afl-cmin"
-      pushd "${SCRIPT_DIR}/afl-cmin" >/dev/null
+      CMOUT_DIR="${OUTPUT_DIR}/afl-cmin-output-${timestamp}"
+      mkdir -p "$CMOUT_DIR"
+
+      pushd "$CMOUT_DIR" >/dev/null
       echo "[*]Running afl-cmin to reduce corpus"
 
       AFL_DEBUG=1 AFL_USE_ASAN=0 AFL_PRINT_FILENAMES=1 AFL_DEBUG_CHILD_OUTPUT=1 \
@@ -115,17 +145,15 @@ case "$SUBCOMMAND" in
 
       popd >/dev/null
       # Check that afl-cmin produced the minimized corpus folder
-      if [ -d "${SCRIPT_DIR}/afl-cmin/after-Cmin-cfiles"]; then
-        echo "Minimized corpus created at: ${SCRIPT_DIR}/afl-cmin/after-Cmin-cfiles"
-        # Optional: show a summary (like how many files)
-        file_count="$(find "${SCRIPT_DIR}/afl-cmin/after-Cmin-cfiles" -type f | wc -l)"
+      if [ -d "${CMOUT_DIR}/after-Cmin-cfiles" ]; then
+        echo "Minimized corpus created at: ${CMOUT_DIR}/after-Cmin-cfiles"
+        file_count="$(find "${CMOUT_DIR}/after-Cmin-cfiles" -type f | wc -l)"
         echo "Total files in minimized corpus: $file_count"
       else
-        echo "[!]ERROR: afl-cmin did not produce 'afl-cmin/after-Cmin-cfiles'!"
-        echo "[!]Check afl-cmin-errors.log for details."
+        echo "[!]ERROR: afl-cmin did not produce ${CMOUT_DIR}/after-Cmin-cfiles!"
+        echo "[!]Check ${CMOUT_DIR}/afl-cmin-errors.log for details."
         exit 1
       fi
-      echo "== 3) Reindexing minimized .c files with absolute paths =="
     else
     echo "== Skipping afl-cmin step (using user-supplied corpus directly) =="
     fi
@@ -134,20 +162,22 @@ case "$SUBCOMMAND" in
     # Step 3) reindex the minimized .c files => rename test_0.c, test_1.c, ...
     ############################################################################
     # Ensure ~/reindex-cfiles is clean
-    mkdir -p "${SCRIPT_DIR}/reindex-cfiles"
-    rm -f "${SCRIPT_DIR}/reindex-cfiles"/*
+    echo "== 3) Reindexing minimized .c files with absolute paths =="
+    REINDEX_DIR="${OUTPUT_DIR}/reindex-output-${timestamp}"
+    mkdir -p "${REINDEX_DIR}/reindex-cfiles"
+    rm -f "${REINDEX_DIR}/reindex-cfiles"/*
 
 
     if [ "$NO_CMIN" -eq 0 ]; then
-      echo "[*] Reindexing from afl-cmin/after-Cmin-cfiles ..."
-      pushd "${SCRIPT_DIR}/afl-cmin/after-Cmin-cfiles" >/dev/null
+      echo "[*] Reindexing from: ${CMOUT_DIR}/after-Cmin-cfiles ..."
+      pushd "${CMOUT_DIR}/after-Cmin-cfiles" >/dev/null
     else
       echo "[*] Reindexing from user-supplied CFILES_DIR = $CFILES_DIR ..."
       pushd "$CFILES_DIR" >/dev/null
     fi
 
     # 1) Copy files as test_0.c, test_1.c, ...
-    find "$(pwd)" -type f -name "*.c" | sort | awk -v reindex="${SCRIPT_DIR}/reindex-cfiles" '{
+    find "$(pwd)" -type f -name "*.c" | sort | awk -v reindex="${REINDEX_DIR}/reindex-cfiles" '{
     printf "cp \"%s\" \"%s/test_%d.c\"\n", $0, reindex, (NR-1)
     }' | bash
 
@@ -159,7 +189,7 @@ case "$SUBCOMMAND" in
     echo "[*] Generating c-file mapping in ./c_name_index_mapping.txt"
 
     if [ "$NO_CMIN" -eq 0 ]; then
-      pushd afl-cmin/after-Cmin-cfiles >/dev/null
+      pushd "${CMOUT_DIR}/after-Cmin-cfiles" >/dev/null
     else
       pushd "$CFILES_DIR" >/dev/null
     fi
@@ -167,23 +197,16 @@ case "$SUBCOMMAND" in
     # Each line:  test_0.c : /abs/path/to/foo.c
     find "$(pwd)" -type f -name "*.c" | sort | awk '{
     printf "test_%d.c : %s\n", (NR-1), $0
-    }' > "${SCRIPT_DIR}/c_name_index_mapping.txt"
+    }' > "${REINDEX_DIR}/c_name_index_mapping.txt"
 
     popd >/dev/null
 
-    echo "[*] Done. Reindexed .c files in reindex-cfiles and created c_name_index_mapping.txt"
+    echo "[*] Done. Reindexed .c files in: ${REINDEX_DIR}/reindex-cfiles"
+    echo "[*] Done. c_name_index_mapping.txt => ${REINDEX_DIR}/c_name_index_mapping.txt"
 
-    export CFILE_PATH="${SCRIPT_DIR}/reindex-cfiles"
-    echo "[*] CFILE_PATH updated as $CFILE_PATH"
-    ############################################################################
-    # Now count how many .c files in reindex-cfiles => FILE_COUNT
-    # Export environment variables for clang-options usage
-    ############################################################################
-    file_count="$(find "${SCRIPT_DIR}/reindex-cfiles" -type f -name "*.c" | wc -l)"
+    export CFILES_DIR="${REINDEX_DIR}/reindex-cfiles"
+    file_count="$(find "${CFILES_DIR}" -type f -name "*.c" | wc -l)"
     echo "[*] Found $file_count .c files in reindex-cfiles"
-
-    # clang-options expects these env vars
-    export CFILES_DIR="${SCRIPT_DIR}/reindex-cfiles"
     export FILE_COUNT="$file_count"
     export INCLUDES_DIR="$INCLUDES_DIR"
 
@@ -197,8 +220,7 @@ case "$SUBCOMMAND" in
     # Step 4) Launch fuzzing
     ############################################################################
     echo "== 4) Launch fuzzing =="
-    timestamp="$(date +%Y%m%d_%H%M%S)"
-    FUZZ_OUT="${SCRIPT_DIR}/Fuzz-output-${timestamp}"
+    FUZZ_OUT="$(pwd)/fuzz-output-${timestamp}"
     mkdir -p "$FUZZ_OUT"
     echo "[*]Fuzzing output directory: $FUZZ_OUT"
 
@@ -228,4 +250,117 @@ case "$SUBCOMMAND" in
       echo "[!]Report generation interrupted"
     fi
     rm -rf object-folder
+    ;;
+
+
+-difftest)
+    timestamp="$(date +%Y%m%d_%H%M%S)"
+
+    if [ $# -lt 3 ]; then
+      echo "Error: not enough args for '-difftest'"
+      show_usage
+      exit 1
+    fi
+    
+    # 1) Parse arguments
+    FUZZED_QUEUE="$1"  # e.g. /abs_path/to/fuzz-output/queue
+    TARGET_NAME="$2"   # e.g. Clang-trunk
+    TARGET_CMP="$3"    # e.g. /abs_path/to/target_cmp
+    shift 3
+
+    DIFF_OUT="$(pwd)/difftest-output-${timestamp}"
+    mkdir -p "$DIFF_OUT"
+    
+    # 2) Inform user
+    echo ""
+    echo "== Differential Testing Mode =="
+    echo "[*]Fuzzed queue/crash/hang directory: $FUZZED_QUEUE"
+    echo "[*]Diff test output directory: $DIFF_OUT"
+    echo "[*]Target name: $TARGET_NAME"
+    echo "[*]Target compiler path: $TARGET_CMP"
+    if [ -z "${INSTRUMENTED_CLANG_OPTIONS_PATH:-}" ]; then
+      echo "[!]Please set INSTRUMENTED_CLANG_OPTIONS_PATH env variable."
+      exit 1
+    fi
+    if [ -z "${CFILES_DIR:-}" ]; then
+      echo "[!]Please set CFILES_DIR env variable."
+      exit 1
+    fi
+    if [ -z "${INCLUDES_DIR:-}" ]; then
+      echo "[!]Please set INCLUDES_DIR env variable."
+      exit 1
+    fi
+    bash "${SCRIPT_DIR}/diff-test.sh" \
+         "$FUZZED_QUEUE" \
+         "$DIFF_OUT" \
+         "$TARGET_NAME" \
+         "$TARGET_CMP"
+
+    # 4) Final lines that used to be in difftest.sh
+    DIFF_REPORT="${DIFF_OUT}/diff_test_summary.txt"
+    {
+      echo ""
+      echo "=== End of Differential Testing ==="
+      echo "Report saved to $DIFF_REPORT"
+    } >> "$DIFF_REPORT"
+
+    # Remove leftover logs
+    rm -f "${DIFF_OUT}"/*.log
+    rm -f "${DIFF_OUT}"/*.out
+    
+    ;;
+
+-f_ddebug)
+    if [ $# -lt 3 ]; then
+      echo "Error: not enough args for '-f_ddebug'"
+      show_usage
+      exit 1
+    fi
+
+    # Parse the first 3 mandatory args
+    CLANG_PATH="$1"        # e.g. /opt/llvm-19/bin/clang
+    TEST_C_FILE="$2"       # e.g. /path/to/single-test.c
+    COMBO_SIZES="$3"       # e.g. "1,2,3"
+    shift 3
+
+    # All remaining arguments are flags
+    FLAG_LIST=( "$@" )
+
+    # We also want to ensure INCLUDES_DIR is set
+    if [ -z "${INCLUDES_DIR:-}" ]; then
+      echo "[!]Please set INCLUDES_DIR env variable."
+      echo "   e.g. export INCLUDES_DIR=\"/abs/path/to/include_dir\""
+      exit 1
+    fi
+    DDEBUG_OUT="$(pwd)"
+    mkdir -p "$DDEBUG_OUT"
+
+    echo ""
+    echo "== Flag-based Delta Debugging Mode =="
+    echo "[*]Clang path: $CLANG_PATH"
+    echo "[*]Test C file: $TEST_C_FILE"
+    echo "[*]Combination sizes: $COMBO_SIZES"
+    echo "[*]Flags: ${FLAG_LIST[*]}"
+    echo "[*]Log Files found in directory: $DDEBUG_OUT"
+
+    # We'll run f_deltadebug.py inside DDEBUG_OUT so logs get placed there
+    pushd "$DDEBUG_OUT" >/dev/null
+
+    python3 "${SCRIPT_DIR}/f_deltadebug.py" \
+            "$CLANG_PATH" \
+            "$TEST_C_FILE" \
+            "$COMBO_SIZES" \
+            "${FLAG_LIST[@]}"
+
+    popd >/dev/null
+
+    echo "[*]Delta debugging completed. Logs (like <test_c_basename>_<size>.log) are in: $DDEBUG_OUT"
+    ;;
+
+*)
+    echo "Error: unknown subcommand '$SUBCOMMAND'"
+    show_usage
+    exit 1
+    ;;
+
 esac
