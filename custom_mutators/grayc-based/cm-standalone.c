@@ -71,10 +71,6 @@ char *pick_file(const char *dir_path) {
     return picked;
 }
 
-int single_file_mutation(const char *mutation) {
-    return strcmp(mutation, "function-merger") != 0;
-}
-
 char *create_mutator_command(const char *tool_bin_path, const char *source_file, const char *lib_paths, const char *seed, const char *mutation) {
     static char command[1024];
     snprintf(command, sizeof(command), "timeout 5s %s/%s %s -- --no-warnings %s %s", tool_bin_path, mutation, source_file, lib_paths, seed);
@@ -123,11 +119,9 @@ int main(int argc, char *argv[]) {
         char mutated_filepath[1024];
         snprintf(mutated_filepath, sizeof(mutated_filepath), "%s/%s", setA, mutated_filename);
 
-        if (single_file_mutation(mutation)) {
-            char *command = create_mutator_command(tool_build_path, source_file_setA, lib_paths, seed, mutation);
-            printf(">>> Running: %s", command);
-            execute_command(command);
-        }
+        char *command = create_mutator_command(tool_build_path, source_file_setA, lib_paths, seed, mutation);
+        printf(">>> Running: %s", command);
+        execute_command(command);
 
         free(source_file_setA);
         total++;
