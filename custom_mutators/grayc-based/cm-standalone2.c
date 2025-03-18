@@ -163,4 +163,4 @@ int main(int argc, char *argv[]) {
 
     return 0;
 }
-/* ./cm-standalone-jm.o /users/user42/setA /users/user42/copy_1/llvm-csmith-1/llvm-fuzzer-build/bin/ /users/user42/outpt *\
+/* ./cm-standalone-jm.o /users/user42/setA /users/user42/copy_1/llvm-csmith-1/llvm-fuzzer-build/bin/ /users/user42/outpt */
