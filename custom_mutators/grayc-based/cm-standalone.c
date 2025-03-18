@@ -199,46 +199,46 @@ int main(int argc, char *argv[]) {
         if (!filename_setA) {
             /* none => skip */
             continue;
-        }
-
-        static char input_file_path[1024];
-        snprintf(input_file_path, sizeof(input_file_path),
-                 "%s/%s", setA, filename_setA);
-
-        char *cmd = create_mutator_command(
-                        tool_build_path,
-                        input_file_path,
-                        lib_paths,
-                        seed,
-                        mutation);
-        execute_command(cmd);
-
-        char *file_no_ext = remove_dot_c(filename_setA);
-
-        char oldpath[1024];
-        snprintf(oldpath, sizeof(oldpath),
-                 "%s/%s.mutated.c", setA, file_no_ext);
-        printf("[DEBUG] Checking mutated file => %s\n", oldpath);
-
-        char newpath[1024];
-        snprintf(newpath, sizeof(newpath),
-                 "%s/%s.mutated.c", output_dir, file_no_ext);
-
-        if (access(oldpath, F_OK) == 0) {
-            if (copy_file(oldpath, newpath) != 0) {
-                fprintf(stderr, "[!] Could not copy mutated file from '%s' => '%s'\n",
-                        oldpath, newpath);
-                failed++;
-            } else {
-                printf("[+] Copied mutated file => %s\n", newpath);
-
-                log_diff_result(input_file_path, oldpath);
+        } else { // If all OKAY
+            static char input_file_path[1024];
+            snprintf(input_file_path, sizeof(input_file_path),
+                     "%s/%s", setA, filename_setA);
+    
+            char *cmd = create_mutator_command(
+                            tool_build_path,
+                            input_file_path,
+                            lib_paths,
+                            seed,
+                            mutation);
+            execute_command(cmd);
+    
+            char *file_no_ext = remove_dot_c(filename_setA);
+    
+            char oldpath[1024];
+            snprintf(oldpath, sizeof(oldpath),
+                     "%s/%s.mutated.c", setA, file_no_ext);
+            printf("[DEBUG] Checking mutated file => %s\n", oldpath);
+    
+            char newpath[1024];
+            snprintf(newpath, sizeof(newpath),
+                     "%s/%s.mutated.c", output_dir, file_no_ext);
+    
+            if (access(oldpath, F_OK) == 0) {
+                if (copy_file(oldpath, newpath) != 0) {
+                    fprintf(stderr, "[!] Could not copy mutated file from '%s' => '%s'\n",
+                            oldpath, newpath);
+                    failed++;
+                } else {
+                    printf("[+] Copied mutated file => %s\n", newpath);
+    
+                    log_diff_result(input_file_path, oldpath);
+                }
             }
+    
+            free(file_no_ext);
+            free(filename_setA);
+            total++;
         }
-
-        free(file_no_ext);
-        free(filename_setA);
-        total++;
     }
 
     return 0;
