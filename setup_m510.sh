@@ -97,8 +97,6 @@ export LLVM_CONFIG=/usr/bin/llvm-config
 git clone https://github.com/karineek/SearchGEM5.git 
 git clone https://github.com/AFLplusplus/AFLplusplus.git 
 cd AFLplusplus 
-git checkout f596a297c4de6a5e1a6fb9fbb3b4e18124a24f58 
-cp ../SearchGEM5/src/gem5-afl/afl-fuzz-init.c src/afl-fuzz-init.c 
 AFL_USE_ASAN=0 make 
 
 # Build AFL++ (disable ASAN via AFL_USE_ASAN=0 for performance/simplicity)
