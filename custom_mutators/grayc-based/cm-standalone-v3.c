@@ -167,7 +167,7 @@ int main(int argc, char *argv[]) {
     const char *tool_build_path  = argv[2];
     const char *output_dir       = argv[3];
 
-    char lib_paths[512] = "-I/usr/include";
+    char lib_paths[512] = "-I/usr/include -I/users/user42/llvmSS-include";
 
     char seed[16];
     snprintf(seed, sizeof(seed), "%d", random_with_N_digits(6));
