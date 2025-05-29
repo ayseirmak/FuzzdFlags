@@ -11,7 +11,7 @@ sudo apt-get update && sudo apt-get upgrade -y
 sudo chown -R user42:user42 /users/user42/
 
 su - user42
-# I need to add coveragescripts here (wget)
+# I need to add coverage scripts here (wget)
 sudo chown -R user42:user42 /users/user42/
 chmod 777 *.sh
 
@@ -34,24 +34,28 @@ cd ../..
 wget https://github.com/ayseirmak/FuzzdFlags/releases/download/v1.0-alpha/C-programset-reindexed.tar.gz
 tar -zxvf C-programset-reindexed.tar.gz
 
-mkdir -p coverage-measurment
-cd coverage-measurment
+mkdir -p coverage-measurement
+cd coverage-measurement
 mkdir -p baselines-cov/baseline-o1-cov baselines-cov/baseline-o2-cov baselines-cov/baseline-o3-cov
 cd ~
 
-cd /users/user42/coverage-measurment/baselines-cov/baseline-o1-cov
+cd /users/user42/coverage-measurement/baselines-cov/baseline-o1-cov
 nohup /users/user42/3-gfauto-directory.sh /users/user42/coverage/llvm-clang-1 /users/user42/C-programset-reindexed /users/user42/coverage/llvm-clang-1/llvm-install/usr/local/bin/clang -O1 > cov-input.log 2>&1 &
 
-cd /users/user42/coverage-measurment/baselines-cov/baseline-o2-cov
+cd /users/user42/coverage-measurement/baselines-cov/baseline-o2-cov
 nohup /users/user42/3-gfauto-directory.sh /users/user42/coverage/llvm-clang-2 /users/user42/C-programset-reindexed /users/user42/coverage/llvm-clang-2/llvm-install/usr/local/bin/clang -O2 > cov-input.log 2>&1 &
 
-cd /users/user42/coverage-measurment/baselines-cov/baseline-o3-cov
+cd /users/user42/coverage-measurement/baselines-cov/baseline-o3-cov
 nohup /users/user42/3-gfauto-directory.sh /users/user42/coverage/llvm-clang-3 /users/user42/C-programset-reindexed /users/user42/coverage/llvm-clang-3/llvm-install/usr/local/bin/clang -O3 > cov-input.log 2>&1 &
 
 cd ~
-nohup /users/user42/4-cov-analysis-single.sh ~/coverage-measurment/baselines-cov/baseline-o1-cov /users/user42/coverage/llvm-clang-1/coverage_processed/x-line-0/cov.out table_line_cov_O1.csv > cov-mes-O1.log 2>&1 &
-nohup /users/user42/4-cov-analysis-single.sh ~/coverage-measurment/baselines-cov/baseline-o2-cov /users/user42/coverage/llvm-clang-2/coverage_processed/x-line-0/cov.out table_line_cov_O2.csv > cov-mes-O2.log 2>&1 &
-nohup /users/user42/4-cov-analysis-single.sh ~/coverage-measurment/baselines-cov/baseline-o3-cov /users/user42/coverage/llvm-clang-3/coverage_processed/x-line-0/cov.out table_line_cov_O3.csv > cov-mes-O3.log 2>&1 &
+nohup /users/user42/4-cov-analysis-single.sh ~/coverage-measurement/baselines-cov/baseline-o1-cov /users/user42/coverage/llvm-clang-1/coverage_processed/x-line-0/cov.out table_line_cov_O1.csv > cov-mes-O1.log 2>&1 &
+nohup /users/user42/4-cov-analysis-single.sh ~/coverage-measurement/baselines-cov/baseline-o2-cov /users/user42/coverage/llvm-clang-2/coverage_processed/x-line-0/cov.out table_line_cov_O2.csv > cov-mes-O2.log 2>&1 &
+nohup /users/user42/4-cov-analysis-single.sh ~/coverage-measurement/baselines-cov/baseline-o3-cov /users/user42/coverage/llvm-clang-3/coverage_processed/x-line-0/cov.out table_line_cov_O3.csv > cov-mes-O3.log 2>&1 &
 
-tar -czvf baselines-cov-analysis.tar.gz -C /users/user42/coverage-measurment/ baselines-cov
+tar -czvf baselines-cov-analysis.tar.gz -C /users/user42/coverage-measurement/ baselines-cov
+tar -czvf baselines-cov-analysis.tar.gz -C /users/user42/coverage-measurement/ baselines-cov
+tar -czvf cov-baseline-o1-result.tar.gz -C /users/user42/coverage/llvm-clang-1 coverage_processed coverage_gcda_files
+tar -czvf cov-baseline-o2-result.tar.gz -C /users/user42/coverage/llvm-clang-2 coverage_processed coverage_gcda_files
+tar -czvf cov-baseline-o3-result.tar.gz -C /users/user42/coverage/llvm-clang-3 coverage_processed coverage_gcda_files
 
