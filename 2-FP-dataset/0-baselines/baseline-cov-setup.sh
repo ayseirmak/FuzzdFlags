@@ -18,9 +18,9 @@ chmod 777 *.sh
 ./0-install-compilers-local.sh 
 mkdir -p coverage
 ./1-clone-llvm.sh /users/user42/coverage 19
-./2-llvm-cov-install.sh /users/user42/coverage <TMP_SOURCE_FOLDER> 1 > /tmp/llvm1-cov-install.log 2>&1 &
-./2-llvm-cov-install.sh /users/user42/coverage <TMP_SOURCE_FOLDER> 2 > /tmp/llvm2-cov-install.log 2>&1 &
-./2-llvm-cov-install.sh /users/user42/coverage <TMP_SOURCE_FOLDER> 3 > /tmp/llvm3-cov-install.log 2>&1 &
+nohup ./2-llvm-cov-install.sh /users/user42/coverage <TMP_SOURCE_FOLDER> 1 > /tmp/llvm1-cov-install.log 2>&1 &
+nohup ./2-llvm-cov-install.sh /users/user42/coverage <TMP_SOURCE_FOLDER> 2 > /tmp/llvm2-cov-install.log 2>&1 &
+nohup ./2-llvm-cov-install.sh /users/user42/coverage <TMP_SOURCE_FOLDER> 3 > /tmp/llvm3-cov-install.log 2>&1 &
 
 git clone https://github.com/google/graphicsfuzz.git
 cd graphicsfuzz/gfauto/
