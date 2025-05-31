@@ -199,7 +199,7 @@ static std::string getFixedFlags() {
         "-c -fpermissive -w "
         "-Wno-implicit-function-declaration -Wno-return-type -Wno-builtin-redeclared "
         "-Wno-implicit-int -Wno-int-conversion "
-        "-march=native "
+        "-march=x86-64-v2 "
         "-I/usr/include";
 
     // Let INCLUDES_DIR override the second -I path
