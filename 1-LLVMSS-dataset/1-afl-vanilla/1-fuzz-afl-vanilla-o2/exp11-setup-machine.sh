@@ -60,8 +60,8 @@ echo "core" | sudo tee /proc/sys/kernel/core_pattern
 # 4. Download Dockerfile & Helper Scripts & Build Fuzzing Image
 # -------------------------------------------------------
 su - user42
-wget https://github.com/ayseirmak/FuzzdFlags/releases/download/v2.0-beta/exp11-dock.dockerfile
-wget https://github.com/ayseirmak/FuzzdFlags/releases/download/v2.0-beta/extract_fuzz_stat_dir.sh
+wget https://raw.githubusercontent.com/ayseirmak/FuzzdFlags/refs/heads/main/1-LLVMSS-dataset/1-afl-vanilla/1-fuzz-afl-vanilla-o2/exp11-dock.dockerfile
+wget https://raw.githubusercontent.com/ayseirmak/FuzzdFlags/refs/heads/main/1-LLVMSS-dataset/extract_fuzz_stat_dir.sh
 chmod +x *.sh
 
 # Build Docker image from the local Dockerfile
@@ -86,31 +86,31 @@ chmod -R 777 fuzz01 fuzz02 fuzz03 fuzz04 fuzz05
 docker run -d --name fuzz01 --cpuset-cpus="0-2" \
   -v /users/user42/fuzz01:/users/user42/output-fuzz \
   afl-vanilla-img \
-  /users/user42/24_fuzz.sh /users/user42/llvmSS-reindex-cfiles \
+  /users/user42/24_fuzz.sh run_AFL_conf_fp_o2.sh /users/user42/llvmSS-reindex-cfiles \
     /users/user42/output-fuzz /users/user42/build-test/bin/clang
 
 docker run -d --name fuzz02 --cpuset-cpus="3-5" \
   -v /users/user42/fuzz02:/users/user42/output-fuzz \
   afl-vanilla-img \
-  /users/user42/24_fuzz.sh /users/user42/llvmSS-reindex-cfiles \
+  /users/user42/24_fuzz.sh run_AFL_conf_fp_o2.sh /users/user42/llvmSS-reindex-cfiles \
     /users/user42/output-fuzz /users/user42/build-test/bin/clang
 
 docker run -d --name fuzz03 --cpuset-cpus="6-8" \
   -v /users/user42/fuzz03:/users/user42/output-fuzz \
   afl-vanilla-img \
-  /users/user42/24_fuzz.sh /users/user42/llvmSS-reindex-cfiles \
+  /users/user42/24_fuzz.sh run_AFL_conf_fp_o2.sh /users/user42/llvmSS-reindex-cfiles \
     /users/user42/output-fuzz /users/user42/build-test/bin/clang
 
 docker run -d --name fuzz04 --cpuset-cpus="9-11" \
   -v /users/user42/fuzz04:/users/user42/output-fuzz \
   afl-vanilla-img \
-  /users/user42/24_fuzz.sh /users/user42/llvmSS-reindex-cfiles \
+  /users/user42/24_fuzz.sh run_AFL_conf_fp_o2.sh /users/user42/llvmSS-reindex-cfiles \
     /users/user42/output-fuzz /users/user42/build-test/bin/clang
 
 docker run -d --name fuzz05 --cpuset-cpus="12-14" \
   -v /users/user42/fuzz05:/users/user42/output-fuzz \
   afl-vanilla-img \
-  /users/user42/24_fuzz.sh /users/user42/llvmSS-reindex-cfiles \
+  /users/user42/24_fuzz.sh run_AFL_conf_fp_o2.sh /users/user42/llvmSS-reindex-cfiles \
     /users/user42/output-fuzz /users/user42/build-test/bin/clang
 
 echo "All 5 fuzzing containers started."
