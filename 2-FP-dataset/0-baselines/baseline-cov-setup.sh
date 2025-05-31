@@ -54,7 +54,6 @@ nohup /users/user42/4-cov-analysis-single.sh ~/coverage-measurement/baselines-co
 nohup /users/user42/4-cov-analysis-single.sh ~/coverage-measurement/baselines-cov/baseline-o3-cov /users/user42/coverage/llvm-clang-3/coverage_processed/x-line-0/cov.out table_line_cov_O3.csv > cov-mes-O3.log 2>&1 &
 
 tar -czvf baselines-cov-analysis.tar.gz -C /users/user42/coverage-measurement/ baselines-cov
-tar -czvf baselines-cov-analysis.tar.gz -C /users/user42/coverage-measurement/ baselines-cov
 tar -czvf cov-baseline-o1-result.tar.gz -C /users/user42/coverage/llvm-clang-1 coverage_processed coverage_gcda_files
 tar -czvf cov-baseline-o2-result.tar.gz -C /users/user42/coverage/llvm-clang-2 coverage_processed coverage_gcda_files
 tar -czvf cov-baseline-o3-result.tar.gz -C /users/user42/coverage/llvm-clang-3 coverage_processed coverage_gcda_files
