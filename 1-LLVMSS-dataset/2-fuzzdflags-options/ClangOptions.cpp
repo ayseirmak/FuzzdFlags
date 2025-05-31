@@ -67,6 +67,7 @@ static const std::vector<std::string> flagList = {
  "-fuse-init-array",
  "-fno-honor-infinities",
  "-Oz",
+ "-Og",
  "-fsigned-zeros",
  "-fno-unsafe-math-optimizations",
  "-funsafe-math-optimizations",
@@ -75,7 +76,6 @@ static const std::vector<std::string> flagList = {
  "-fno-strict-overflow",
  "-fno-associative-math",
  "-ffp-exception-behavior=ignore",
- "-freroll-loops",
  "-fno-strict-aliasing",
  "-funroll-loops",
  "-ffinite-math-only",
@@ -199,7 +199,7 @@ static std::string getFixedFlags() {
         "-c -fpermissive -w "
         "-Wno-implicit-function-declaration -Wno-return-type -Wno-builtin-redeclared "
         "-Wno-implicit-int -Wno-int-conversion "
-        "-march=x86-64-v2 "
+        "-march=native "
         "-I/usr/include";
 
     // Let INCLUDES_DIR override the second -I path
