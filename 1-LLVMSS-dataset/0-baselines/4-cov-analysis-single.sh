@@ -15,6 +15,8 @@ workdir=$1
 cov_file=$2
 table_name=$3
 LOGFILE="$workdir/coverage_analysis.log"
+rm -f "$LOGFILE" # Remove the log file if it exists, so we start fresh
+rm -f "$workdir/$table_name" # Remove the table file if it exists, so we start fresh
 
 # Redirect *all* script output (stdout + stderr) into $LOGFILE.
 # Using exec changes redirections for the entire script from this point forward.
@@ -93,9 +95,8 @@ cat "$table_name" \
         printf "Total Coverage: %.2f%%\n", (covered/total)*100;
         printf "Average Coverage: %.2f%%\n", sum_pct/count;
       }'
-      
-/users/user42/61-backend-cov-analysis.sh "$workdir"
-/users/user42/62-middleend-cov-analysis.sh "$workdir"
+/users/user42/61-backend-cov-analysis.sh "$workdir" "$table_name"
+/users/user42/62-middleend-cov-analysis.sh "$workdir" "$table_name"
 cd ..
 
 echo "===== FINISHED SCRIPT at $(date) ====="
