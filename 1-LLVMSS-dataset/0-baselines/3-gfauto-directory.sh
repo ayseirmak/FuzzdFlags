@@ -9,7 +9,14 @@ opt=$4 # "-O2"
 old_version=0
 compiler_build="llvm-build"
 gfauto="/users/user42/graphicsfuzz/gfauto"
-mkdir -p $working_folder/coverage_gcda_files/application_run
+
+# Directory where the .gcda files will be collected
+gcda_dir="$working_folder/coverage_gcda_files/application_run"
+cov_dir="$working_folder/coverage_processed"
+rm -rf "$gcda_dir"
+rm -rf "$cov_dir"
+mkdir -p "$gcda_dir"
+
 
 time2=$(date +"%T")
 echo "--> COMPILING "$testcaseDir" ITERATION "$itr" with compiler info. "$compilerInfo" ("$time2")"
@@ -40,28 +47,28 @@ unset GCOV_PREFIX
 ## Measure Coverage
 time3=$(date +"%T")
 echo "--> MEASURING COVERAGE... ("$time3")"
-mkdir -p $working_folder/coverage_processed/x-$itr
-mkdir -p $working_folder/coverage_processed/x-line-$itr
+mkdir -p $cov_dir/x-$itr
+mkdir -p $cov_dir/x-line-$itr
 (
 	source $gfauto/.venv/bin/activate
 	
 	## Function coverage
-	cd $working_folder/coverage_processed/x-$itr
+	cd $cov_dir/x-$itr
 	if [ "$old_version" == "1" ]; then
-		gfauto_cov_from_gcov --out run_gcov2cov.cov $working_folder/$compiler_build/ $working_folder/coverage_gcda_files/application_run/ --num_threads 20 --gcov_uses_json --gcov_functions >> gfauto.log 2>&1
+		gfauto_cov_from_gcov --out run_gcov2cov.cov $working_folder/$compiler_build/ $working_folder/coverage_gcda_files/application_run/ --num_threads 5 --gcov_uses_json --gcov_functions >> gfauto.log 2>&1
 	else
-		echo "gfauto_cov_from_gcov --out run_gcov2cov.cov $working_folder/$compiler_build/ --gcov_prefix_dir $working_folder/coverage_gcda_files/application_run/ --num_threads 20 --gcov_uses_json --gcov_functions >> gfauto.log 2>&1"
-		gfauto_cov_from_gcov --out run_gcov2cov.cov $working_folder/$compiler_build/ --gcov_prefix_dir $working_folder/coverage_gcda_files/application_run/ --num_threads 20 --gcov_uses_json --gcov_functions >> gfauto.log 2>&1
+		echo "gfauto_cov_from_gcov --out run_gcov2cov.cov $working_folder/$compiler_build/ --gcov_prefix_dir $working_folder/coverage_gcda_files/application_run/ --num_threads 5 --gcov_uses_json --gcov_functions >> gfauto.log 2>&1"
+		gfauto_cov_from_gcov --out run_gcov2cov.cov $working_folder/$compiler_build/ --gcov_prefix_dir $working_folder/coverage_gcda_files/application_run/ --num_threads 5 --gcov_uses_json --gcov_functions >> gfauto.log 2>&1
 	fi
         gfauto_cov_to_source --coverage_out cov.out --cov run_gcov2cov.cov $working_folder/$compiler_build/ >> gfauto.log 2>&1
         
         ## Line coverage
-        cd $working_folder/coverage_processed/x-line-$itr
+        cd $cov_dir/x-line-$itr
         if [ "$old_version" == "1" ]; then
-        	gfauto_cov_from_gcov --out run_gcov2cov.cov $working_folder/$compiler_build/ $working_folder/coverage_gcda_files/application_run/ --num_threads 20 --gcov_uses_json >> gfauto.log 2>&1
+        	gfauto_cov_from_gcov --out run_gcov2cov.cov $working_folder/$compiler_build/ $working_folder/coverage_gcda_files/application_run/ --num_threads 5 --gcov_uses_json >> gfauto.log 2>&1
         else
-		echo "gfauto_cov_from_gcov --out run_gcov2cov.cov $working_folder/$compiler_build/ --gcov_prefix_dir $working_folder/coverage_gcda_files/application_run/ --num_threads 20 --gcov_uses_json >> gfauto.log 2>&1"
-        	gfauto_cov_from_gcov --out run_gcov2cov.cov $working_folder/$compiler_build/ --gcov_prefix_dir $working_folder/coverage_gcda_files/application_run/ --num_threads 20 --gcov_uses_json >> gfauto.log 2>&1
+		echo "gfauto_cov_from_gcov --out run_gcov2cov.cov $working_folder/$compiler_build/ --gcov_prefix_dir $working_folder/coverage_gcda_files/application_run/ --num_threads 5 --gcov_uses_json >> gfauto.log 2>&1"
+        	gfauto_cov_from_gcov --out run_gcov2cov.cov $working_folder/$compiler_build/ --gcov_prefix_dir $working_folder/coverage_gcda_files/application_run/ --num_threads 5 --gcov_uses_json >> gfauto.log 2>&1
         fi
         gfauto_cov_to_source --coverage_out cov.out --cov run_gcov2cov.cov $working_folder/$compiler_build/ >> gfauto.log 2>&1
         ls -l
