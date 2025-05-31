@@ -93,7 +93,9 @@ cat "$table_name" \
         printf "Total Coverage: %.2f%%\n", (covered/total)*100;
         printf "Average Coverage: %.2f%%\n", sum_pct/count;
       }'
-
+      
+/users/user42/61-backend-cov-analysis.sh "$workdir"
+/users/user42/62-middleend-cov-analysis.sh "$workdir"
 cd ..
 
 echo "===== FINISHED SCRIPT at $(date) ====="
