@@ -107,8 +107,8 @@ RUN wget https://github.com/ayseirmak/FuzzdFlags/releases/download/v2.0-beta/exp
     tar -zxvf exp1-clang-build.tar.gz
 
 # Download and extract rs-fuzz-scripts, make scripts executable, and remove tarballs
-RUN wget https://github.com/ayseirmak/FuzzdFlags/releases/download/v2.0-beta/exp12-fuzz-scripts.tar.gz && \
-    tar -xzvf exp12-fuzz-scripts.tar.gz && \
+RUN wget https://raw.githubusercontent.com/ayseirmak/FuzzdFlags/refs/heads/main/1-LLVMSS-dataset/24_fuzz.sh && \
+    wget https://raw.githubusercontent.com/ayseirmak/FuzzdFlags/refs/heads/main/1-LLVMSS-dataset/1-afl-vanilla/2-fuzz-afl-vanilla-o3/run_AFL_conf_fp_o3.sh && \
     chmod +x *.sh && \
     rm *.tar.gz
 
