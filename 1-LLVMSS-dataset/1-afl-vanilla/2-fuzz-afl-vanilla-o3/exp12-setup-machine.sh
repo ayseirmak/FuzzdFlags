@@ -60,8 +60,8 @@ echo "core" | sudo tee /proc/sys/kernel/core_pattern
 # 4. Download Dockerfile & Helper Scripts & Build Fuzzing Image
 # -------------------------------------------------------
 su - user42
-https://raw.githubusercontent.com/ayseirmak/FuzzdFlags/refs/heads/main/1-LLVMSS-dataset/1-afl-vanilla/2-fuzz-afl-vanilla-o3/exp12-dock.dockerfile
-https://raw.githubusercontent.com/ayseirmak/FuzzdFlags/refs/heads/main/1-LLVMSS-dataset/extract_fuzz_stat_dir.sh
+wget https://raw.githubusercontent.com/ayseirmak/FuzzdFlags/refs/heads/main/1-LLVMSS-dataset/1-afl-vanilla/2-fuzz-afl-vanilla-o3/exp12-dock.dockerfile
+wget https://raw.githubusercontent.com/ayseirmak/FuzzdFlags/refs/heads/main/1-LLVMSS-dataset/extract_fuzz_stat_dir.sh
 chmod +x *.sh
 
 # Build Docker image from the local Dockerfile
