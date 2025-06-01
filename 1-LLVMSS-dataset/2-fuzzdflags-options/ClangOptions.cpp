@@ -35,6 +35,12 @@ static uint16_t getEnvOrDefaultInt(const char* varName, uint16_t defaultVal) {
 
 
 static const std::vector<std::string> flagList = {
+ "-flto=thin",
+ "-flto",
+ "-fPIC", 
+ "-fPIE", 
+ "-fno-pic", 
+ "-fno-pie",
  "-march=x86-64",
  "-march=x86-64-v3",
  "-march=x86-64-v4",
