@@ -60,13 +60,13 @@ echo "core" | sudo tee /proc/sys/kernel/core_pattern
 # 4. Download Dockerfile and Helper Scripts & Build Fuzzing Image
 # -------------------------------------------------------
 su - user42
-wget https://github.com/ayseirmak/FuzzdFlags/releases/download/v2.0-beta/exp22-10seed-dock.dockerfile
-wget https://github.com/ayseirmak/FuzzdFlags/releases/download/v2.0-beta/extract_fuzz_stat_dir.sh
-wget https://github.com/ayseirmak/FuzzdFlags/releases/download/v2.0-beta/decrypt_queue.sh
+wget https://raw.githubusercontent.com/ayseirmak/FuzzdFlags/refs/heads/main/1-LLVMSS-dataset/2-fuzzdflags-options/2-fuzzdflags-30seed/exp22-30seed-dock.dockerfile
+wget https://raw.githubusercontent.com/ayseirmak/FuzzdFlags/refs/heads/main/1-LLVMSS-dataset/extract_fuzz_stat_dir.sh
+wget https://raw.githubusercontent.com/ayseirmak/FuzzdFlags/refs/heads/main/1-LLVMSS-dataset/decrypt_queue.sh
 chmod +x *.sh
 
 # Build Docker image from the local Dockerfile
-docker build -f exp22-10seed-dock.dockerfile -t afl-clang-opts-img .
+docker build -f exp22-30seed-dock.dockerfile -t afl-clang-opts-img .
 
 # -------------------------------------------------------
 # 5. Prepare Output Directories
@@ -87,31 +87,31 @@ chmod -R 777 fuzz01 fuzz02 fuzz03 fuzz04 fuzz05
 docker run -d --name fuzz01 --cpuset-cpus="0-2" \
   -v /users/user42/fuzz01:/users/user42/output-fuzz \
   afl-clang-opts-img \
-  /users/user42/24_fuzz.sh /users/user42/input-seeds \
+  /users/user42/24_fuzz.sh run_AFL_conf_clangopt.sh /users/user42/input-seeds \
     /users/user42/output-fuzz /users/user42/build/bin/clang-options
 
 docker run -d --name fuzz02 --cpuset-cpus="3-5" \
   -v /users/user42/fuzz02:/users/user42/output-fuzz \
   afl-clang-opts-img \
-  /users/user42/24_fuzz.sh /users/user42/input-seeds \
+  /users/user42/24_fuzz.sh run_AFL_conf_clangopt.sh /users/user42/input-seeds \
     /users/user42/output-fuzz /users/user42/build/bin/clang-options
 
 docker run -d --name fuzz03 --cpuset-cpus="6-8" \
   -v /users/user42/fuzz03:/users/user42/output-fuzz \
   afl-clang-opts-img \
-  /users/user42/24_fuzz.sh /users/user42/input-seeds \
+  /users/user42/24_fuzz.sh run_AFL_conf_clangopt.sh /users/user42/input-seeds \
     /users/user42/output-fuzz /users/user42/build/bin/clang-options
 
 docker run -d --name fuzz04 --cpuset-cpus="9-11" \
   -v /users/user42/fuzz04:/users/user42/output-fuzz \
   afl-clang-opts-img \
-  /users/user42/24_fuzz.sh /users/user42/input-seeds \
+  /users/user42/24_fuzz.sh run_AFL_conf_clangopt.sh /users/user42/input-seeds \
     /users/user42/output-fuzz /users/user42/build/bin/clang-options
 
 docker run -d --name fuzz05 --cpuset-cpus="12-14" \
   -v /users/user42/fuzz05:/users/user42/output-fuzz \
   afl-clang-opts-img \
-  /users/user42/24_fuzz.sh /users/user42/input-seeds \
+  /users/user42/24_fuzz.sh run_AFL_conf_clangopt.sh /users/user42/input-seeds \
     /users/user42/output-fuzz /users/user42/build/bin/clang-options
 
 echo "All 5 fuzzing containers started."
@@ -123,13 +123,13 @@ sudo chown -R user42:user42 /users/user42
 # -------------------------------------------------------
 # After Fuzzing to decode binary queues
 # -------------------------------------------------------
-wget https://github.com/ayseirmak/FuzzdFlags/releases/download/v2.0-beta/exp2-clang-options-build.tar.gz
-tar -zxvf exp2-clang-options-build.tar.gz
-mkdir -p exp22-fuzzdflags-10seed-queue
+wget https://github.com/ayseirmak/FuzzdFlags/releases/download/v5.0/exp2-clangOpt-build.tar.gz
+tar -zxvf exp2-clangOpt-build.tar.gz
+mkdir -p exp22-fuzzdflags-30seed-queue
 # Decrypt the queues from each fuzzing container
-./decrypt_queue.sh fuzz01/default/queue/ exp22-fuzzdflags-10seed-queue/fuzz01-queue
-./decrypt_queue.sh fuzz02/default/queue/ exp22-fuzzdflags-10seed-queue/fuzz02-queue
-./decrypt_queue.sh fuzz03/default/queue/ exp22-fuzzdflags-10seed-queue/fuzz03-queue
-./decrypt_queue.sh fuzz04/default/queue/ exp22-fuzzdflags-10seed-queue/fuzz04-queue
-./decrypt_queue.sh fuzz05/default/queue/ exp22-fuzzdflags-10seed-queue/fuzz05-queue
-tar -czvf exp22-fuzzdflags-10seed-queue.tar.gz -C /users/user42 exp22-fuzzdflags-10seed-queue
+./decrypt_queue.sh fuzz01/default/queue/ exp22-fuzzdflags-30seed-queue/fuzz01-queue
+./decrypt_queue.sh fuzz02/default/queue/ exp22-fuzzdflags-30seed-queue/fuzz02-queue
+./decrypt_queue.sh fuzz03/default/queue/ exp22-fuzzdflags-30seed-queue/fuzz03-queue
+./decrypt_queue.sh fuzz04/default/queue/ exp22-fuzzdflags-30seed-queue/fuzz04-queue
+./decrypt_queue.sh fuzz05/default/queue/ exp22-fuzzdflags-30seed-queue/fuzz05-queue
+tar -czvf exp22-fuzzdflags-30seed-queue.tar.gz -C /users/user42 exp22-fuzzdflags-30seed-queue
