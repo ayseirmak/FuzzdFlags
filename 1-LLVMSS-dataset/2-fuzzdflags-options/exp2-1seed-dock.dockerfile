@@ -103,12 +103,12 @@ RUN wget https://github.com/ayseirmak/FuzzdFlags/releases/download/v1.0-alpha/ll
     tar -zxvf llvmSS-reindex-after-Cmin.tar.gz
 
 # Download and extract rs-clang-options-build
-RUN wget https://github.com/ayseirmak/FuzzdFlags/releases/download/v2.0-beta/exp2-clang-options-build.tar.gz && \
-    tar -zxvf exp2-clang-options-build.tar.gz
+RUN wget https://github.com/ayseirmak/FuzzdFlags/releases/download/v5.0/exp2-clangOpt-build.tar.gz && \
+    tar -zxvf exp2-clangOpt-build.tar.gz
 
-# Download and extract rs-fuzz-scripts, make scripts executable, and remove tarballs
-RUN wget https://github.com/ayseirmak/FuzzdFlags/releases/download/v1.0-alpha/rs-fuzz-scripts.tar.gz && \
-    tar -zxvf rs-fuzz-scripts.tar.gz && \
+# Download and extract fuzz-scripts, make scripts executable, and remove tarballs
+RUN wget https://raw.githubusercontent.com/ayseirmak/FuzzdFlags/refs/heads/main/1-LLVMSS-dataset/24_fuzz.sh && \
+    wget https://raw.githubusercontent.com/ayseirmak/FuzzdFlags/refs/heads/main/1-LLVMSS-dataset/2-fuzzdflags-options/run_AFL_conf_clangopt.sh && \
     chmod +x *.sh && \
     rm *.tar.gz
 
