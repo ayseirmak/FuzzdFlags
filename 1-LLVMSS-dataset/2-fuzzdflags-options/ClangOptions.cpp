@@ -41,7 +41,6 @@ static const std::vector<std::string> flagList = {
  "-fPIE", 
  "-fno-pic", 
  "-fno-pie",
- "-march=x86-64",
  "-march=x86-64-v3",
  "-march=x86-64-v4",
  "-march=skylake-avx512",  
