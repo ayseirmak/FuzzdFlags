@@ -35,12 +35,12 @@ static uint16_t getEnvOrDefaultInt(const char* varName, uint16_t defaultVal) {
 
 
 static const std::vector<std::string> flagList = {    
-"-flto=thin",
-"-flto",
-"-fPIC", 
-"-fPIE", 
-"-fno-pic", 
-"-fno-pie",
+ "-flto=thin",
+ "-flto",
+ "-fPIC", 
+ "-fPIE", 
+ "-fno-pic", 
+ "-fno-pie",
  "-march=x86-64",
  "-march=x86-64-v3",
  "-march=x86-64-v4",
@@ -189,14 +189,14 @@ static std::string getFixedFlags() {
         "-c -fpermissive -w "
         "-Wno-implicit-function-declaration -Wno-return-type -Wno-builtin-redeclared "
         "-Wno-implicit-int -Wno-int-conversion "
-        "-march=native "
+        "-march=x86-64-v2 "
         "-I/usr/include";
 
     // Let INCLUDES_DIR override the second -I path
     //  fallback = "/users/user42/llvmSS-include"
     std::string includesDir = getEnvOrDefault("INCLUDES_DIR", "/users/user42/llvmSS-include");
     baseFlags += " -I" + includesDir;
-    baseFlags += " -lm"
+    baseFlags += " -lm";
     return baseFlags;
 }
 
