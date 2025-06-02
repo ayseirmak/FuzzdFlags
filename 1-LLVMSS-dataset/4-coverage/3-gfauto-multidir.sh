@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
-fuzzQueueDir="$1"
-if [ -z "$fuzzQueueDir" ]; then
-  echo "Usage: $0 /path/to/fuzzQueueDir"
+fuzzDir="$1"
+if [ -z "$fuzzDir" ]; then
+  echo "Usage: $0 /path/to/fuzzDir"
   exit 1
 fi
 working_folder=$2 # "/users/user42/coverage/llvm-clang-1"
@@ -31,8 +31,8 @@ mkdir -p "$gcda_dir"
 current_folder=$(pwd)
 
 # Process each fuzz queue file
-for queueFolder in "$fuzzQueueDir"/*; do
-  repetition=$(basename "$queueFolder")     # e.g., m1-fuzz01-queue
+for queueFolder in "$fuzzDir"/fuzz*; do  
+  repetition=$(basename "$queueFolder")     # e.g., fuzz01
   echo "=== PROCESSING: $repetition ==="
   
   # Create separate coverage result directories for this repetition:
@@ -45,7 +45,7 @@ for queueFolder in "$fuzzQueueDir"/*; do
   rm -rf "$gcda_dir"
   mkdir -p "$gcda_dir"
 
-  for testcaseFile in "$queueFolder"/*; do
+  for testcaseFile in "$queueFolder"/default/queue/*; do
     compiler_flag=""$opt" -lm"
     export GCOV_PREFIX="$gcda_dir"
     ## Compile the test-case
