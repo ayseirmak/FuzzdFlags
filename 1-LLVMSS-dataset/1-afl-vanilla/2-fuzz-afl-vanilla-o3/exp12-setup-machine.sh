@@ -119,3 +119,4 @@ echo "All 5 fuzzing containers started."
 # -------------------------------------------------------
 sudo chown -R user42:user42 /users/user42
 ./extract_fuzz_stat_dir.sh /users/user42
+tar -czvf exp12-fuzz-results.tar.gz -C /users/user42/ fuzz01 fuzz02 fuzz03 fuzz04 fuzz05
