@@ -82,33 +82,33 @@ chmod -R 777 fuzz01 fuzz02 fuzz03 fuzz04 fuzz05
 # -------------------------------------------------------
 # NOTE: Adjust --cpuset-cpus according to the actual cores on your m510 node.
 # Give each container 3 cores:
-# fuzz01 -> 0-2, fuzz02 -> 3-5, fuzz03 -> 6-8, fuzz04 -> 9-11, fuzz05 -> 12-14
+# for 16 cpu fuzz01 -> 0-2, fuzz02 -> 3-5, fuzz03 -> 6-8, fuzz04 -> 9-11, fuzz05 -> 12-14
 
-docker run -d --name fuzz01 --cpuset-cpus="0-2" \
+docker run -d --name fuzz01 --cpuset-cpus="0-9" \
   -v /users/user42/fuzz01:/users/user42/output-fuzz \
   afl-clang-opts-img \
   /users/user42/24_fuzz.sh run_AFL_conf_clangopt.sh /users/user42/input-seeds \
     /users/user42/output-fuzz /users/user42/build/bin/clang-options
 
-docker run -d --name fuzz02 --cpuset-cpus="3-5" \
+docker run -d --name fuzz02 --cpuset-cpus="10-19" \
   -v /users/user42/fuzz02:/users/user42/output-fuzz \
   afl-clang-opts-img \
   /users/user42/24_fuzz.sh run_AFL_conf_clangopt.sh /users/user42/input-seeds \
     /users/user42/output-fuzz /users/user42/build/bin/clang-options
 
-docker run -d --name fuzz03 --cpuset-cpus="6-8" \
+docker run -d --name fuzz03 --cpuset-cpus="20-29" \
   -v /users/user42/fuzz03:/users/user42/output-fuzz \
   afl-clang-opts-img \
   /users/user42/24_fuzz.sh run_AFL_conf_clangopt.sh /users/user42/input-seeds \
     /users/user42/output-fuzz /users/user42/build/bin/clang-options
 
-docker run -d --name fuzz04 --cpuset-cpus="9-11" \
+docker run -d --name fuzz04 --cpuset-cpus="30-39" \
   -v /users/user42/fuzz04:/users/user42/output-fuzz \
   afl-clang-opts-img \
   /users/user42/24_fuzz.sh run_AFL_conf_clangopt.sh /users/user42/input-seeds \
     /users/user42/output-fuzz /users/user42/build/bin/clang-options
 
-docker run -d --name fuzz05 --cpuset-cpus="12-14" \
+docker run -d --name fuzz05 --cpuset-cpus="40-49" \
   -v /users/user42/fuzz05:/users/user42/output-fuzz \
   afl-clang-opts-img \
   /users/user42/24_fuzz.sh run_AFL_conf_clangopt.sh /users/user42/input-seeds \
