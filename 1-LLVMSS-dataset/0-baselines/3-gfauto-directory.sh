@@ -23,7 +23,7 @@ echo "--> COMPILING "$testcaseDir" ITERATION "$itr" with compiler info. "$compil
 
 # Run compiler and save coverage data
 export GCOV_PREFIX=$working_folder/coverage_gcda_files/application_run
-compile_line_lib_default="-fpermissive -w -Wno-implicit-function-declaration -Wno-return-type -Wno-builtin-redeclared -Wno-implicit-int -Wno-int-conversion -march=x86-64-v2 -I/usr/include -I/users/user42/llvmSS-include"
+compile_line_lib_default="-c -fpermissive -w -Wno-implicit-function-declaration -Wno-return-type -Wno-builtin-redeclared -Wno-implicit-int -Wno-int-conversion -march=x86-64-v2 -I/usr/include -I/users/user42/llvmSS-include"
 echo "Folder: $testcaseDir"
 for testcaseFile in $testcaseDir/* ; do
 	compiler_flag="$opt"
