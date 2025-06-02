@@ -1,6 +1,8 @@
 #!/usr/bin/env bash
 
 working_folder=$1
+table_name=$2
+
 LOGFILE="backend_coverage_analysis.log"
 
 # Redirect all standard output and error to the log file.
@@ -8,7 +10,7 @@ exec > "$working_folder/$LOGFILE" 2>&1
 
 echo "===== STARTING SCRIPT at $(date) ====="
 
-CSV_FILE="$working_folder/table__all_1_0.csv"
+CSV_FILE="$working_folder/$table_name"
 
 declare -a GROUP_PATTERNS=(
   "clang/lib/CodeGen/"
