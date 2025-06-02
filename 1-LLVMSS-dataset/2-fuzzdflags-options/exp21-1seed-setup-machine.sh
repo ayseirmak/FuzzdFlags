@@ -60,13 +60,13 @@ echo "core" | sudo tee /proc/sys/kernel/core_pattern
 # 4. Download Dockerfile & Build Fuzzing Image
 # -------------------------------------------------------
 su - user42
-wget https://github.com/ayseirmak/FuzzdFlags/releases/download/v2.0-beta/exp2-1seed-dock.dockerfile
-wget https://github.com/ayseirmak/FuzzdFlags/releases/download/v2.0-beta/extract_fuzz_stat_dir.sh
-wget https://github.com/ayseirmak/FuzzdFlags/releases/download/v2.0-beta/decrypt_queue.sh
+wget https://raw.githubusercontent.com/ayseirmak/FuzzdFlags/refs/heads/main/1-LLVMSS-dataset/2-fuzzdflags-options/exp21-1seed-dock.dockerfile
+wget https://raw.githubusercontent.com/ayseirmak/FuzzdFlags/refs/heads/main/1-LLVMSS-dataset/extract_fuzz_stat_dir.sh
+wget https://raw.githubusercontent.com/ayseirmak/FuzzdFlags/refs/heads/main/1-LLVMSS-dataset/decrypt_queue.sh
 chmod +x *.sh
 
 # Build Docker image from the local Dockerfile
-docker build -f exp2-1seed-dock.dockerfile -t afl-clang-opts-img .
+docker build -f exp21-1seed-dock.dockerfile -t afl-clang-opts-img .
 
 # -------------------------------------------------------
 # 5. Prepare Output Directories
@@ -82,36 +82,36 @@ chmod -R 777 fuzz01 fuzz02 fuzz03 fuzz04 fuzz05
 # -------------------------------------------------------
 # NOTE: Adjust --cpuset-cpus according to the actual cores on your m510 node.
 # Give each container 3 cores:
-# fuzz01 -> 0-2, fuzz02 -> 3-5, fuzz03 -> 6-8, fuzz04 -> 9-11, fuzz05 -> 12-14
+# for 16 cpu fuzz01 -> 0-2, fuzz02 -> 3-5, fuzz03 -> 6-8, fuzz04 -> 9-11, fuzz05 -> 12-14
 
-docker run -d --name fuzz01 --cpuset-cpus="0-2" \
+docker run -d --name fuzz01 --cpuset-cpus="0-9" \
   -v /users/user42/fuzz01:/users/user42/output-fuzz \
   afl-clang-opts-img \
-  /users/user42/24_fuzz.sh /users/user42/input-seeds \
+  /users/user42/24_fuzz.sh run_AFL_conf_clangopt.sh /users/user42/input-seeds \
     /users/user42/output-fuzz /users/user42/build/bin/clang-options
 
-docker run -d --name fuzz02 --cpuset-cpus="3-5" \
+docker run -d --name fuzz02 --cpuset-cpus="10-19" \
   -v /users/user42/fuzz02:/users/user42/output-fuzz \
   afl-clang-opts-img \
-  /users/user42/24_fuzz.sh /users/user42/input-seeds \
+  /users/user42/24_fuzz.sh run_AFL_conf_clangopt.sh /users/user42/input-seeds \
     /users/user42/output-fuzz /users/user42/build/bin/clang-options
 
-docker run -d --name fuzz03 --cpuset-cpus="6-8" \
+docker run -d --name fuzz03 --cpuset-cpus="20-29" \
   -v /users/user42/fuzz03:/users/user42/output-fuzz \
   afl-clang-opts-img \
-  /users/user42/24_fuzz.sh /users/user42/input-seeds \
+  /users/user42/24_fuzz.sh run_AFL_conf_clangopt.sh /users/user42/input-seeds \
     /users/user42/output-fuzz /users/user42/build/bin/clang-options
 
-docker run -d --name fuzz04 --cpuset-cpus="9-11" \
+docker run -d --name fuzz04 --cpuset-cpus="30-39" \
   -v /users/user42/fuzz04:/users/user42/output-fuzz \
   afl-clang-opts-img \
-  /users/user42/24_fuzz.sh /users/user42/input-seeds \
+  /users/user42/24_fuzz.sh run_AFL_conf_clangopt.sh /users/user42/input-seeds \
     /users/user42/output-fuzz /users/user42/build/bin/clang-options
 
-docker run -d --name fuzz05 --cpuset-cpus="12-14" \
+docker run -d --name fuzz05 --cpuset-cpus="40-49" \
   -v /users/user42/fuzz05:/users/user42/output-fuzz \
   afl-clang-opts-img \
-  /users/user42/24_fuzz.sh /users/user42/input-seeds \
+  /users/user42/24_fuzz.sh run_AFL_conf_clangopt.sh /users/user42/input-seeds \
     /users/user42/output-fuzz /users/user42/build/bin/clang-options
 
 echo "All 5 fuzzing containers started."
@@ -123,8 +123,8 @@ sudo chown -R user42:user42 /users/user42
 # -------------------------------------------------------
 # After Fuzzing to decode binary queues
 # -------------------------------------------------------
-wget https://github.com/ayseirmak/FuzzdFlags/releases/download/v2.0-beta/exp2-clang-options-build.tar.gz
-tar -zxvf exp2-clang-options-build.tar.gz
+wget https://github.com/ayseirmak/FuzzdFlags/releases/download/v5.0/exp2-clangOpt-build.tar.gz
+tar -zxvf exp2-clangOpt-build.tar.gz
 mkdir -p exp21-fuzzdflags-1seed-queue
 # Decrypt the queues from each fuzzing container
 ./decrypt_queue.sh fuzz01/default/queue/ exp21-fuzzdflags-1seed-queue/fuzz01-queue
