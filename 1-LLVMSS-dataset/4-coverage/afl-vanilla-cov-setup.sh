@@ -53,8 +53,8 @@ cd /users/user42/coverage-measurement/afl-vanilla-cov/afl-vanilla-o3-cov
 nohup /users/user42/3-gfauto-multidir.sh  /users/user42/afl-vanilla-fuzz-o3 /users/user42/coverage/llvm-clang-3  -O3 > cov-llvm3-input.log 2>&1 &
 
 cd ~
-nohup /users/user42/4-cov-analysis-multidir.sh ~/coverage-measurement/afl-vanilla-cov/afl-vanilla-o2-cov  /users/user42/coverage/llvm-clang-2 table_line_cov_afl_o2.csv > cov-mes-afl-o2.log 2>&1 &
-nohup /users/user42/4-cov-analysis-multidir.sh ~/coverage-measurement/afl-vanilla-cov/afl-vanilla-o3-cov  /users/user42/coverage/llvm-clang-3 table_line_cov_afl_o3.csv > cov-mes-afl-o3.log 2>&1 &
+nohup /users/user42/4-cov-analysis-dir.sh ~/coverage-measurement/afl-vanilla-cov/afl-vanilla-o2-cov  /users/user42/coverage/llvm-clang-2 table_line_cov_afl_o2.csv > cov-mes-afl-o2.log 2>&1 &
+nohup /users/user42/4-cov-analysis-dir.sh ~/coverage-measurement/afl-vanilla-cov/afl-vanilla-o3-cov  /users/user42/coverage/llvm-clang-3 table_line_cov_afl_o3.csv > cov-mes-afl-o3.log 2>&1 &
 
 tar -czvf afl-vanilla-cov-analysis.tar.gz -C /users/user42/coverage-measurement/ afl-vanilla-cov
 tar -czvf cov-afl-vanilla-o2-result.tar.gz -C /users/user42/coverage/llvm-clang-2 coverage_processed coverage_gcda_files
