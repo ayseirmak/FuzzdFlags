@@ -14,7 +14,7 @@ old_version=0     # use 0 for new gfauto style
 
 compiler_build="llvm-build"  # path to the compiler
 configuration_location="$working_folder/compiler_test.in"  # configuration file containing the compiler command
-compile_line_lib_default="-fpermissive -w -Wno-implicit-function-declaration -Wno-return-type -Wno-builtin-redeclared -Wno-implicit-int -Wno-int-conversion -march=native -I/usr/include -I/users/user42/llvmSS-include"
+compile_line_lib_default="-c -o /dev/null -fpermissive -w -Wno-implicit-function-declaration -Wno-return-type -Wno-builtin-redeclared -Wno-implicit-int -Wno-int-conversion -march=x86-64-v2 -I/usr/include -I/users/user42/llvmSS-include"
 
 # Get compiler command from the configuration file (first line)
 compilerInfo=$(head -1 "$configuration_location")
