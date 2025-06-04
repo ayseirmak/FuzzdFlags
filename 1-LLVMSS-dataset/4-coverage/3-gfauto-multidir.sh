@@ -25,7 +25,11 @@ fi
 
 # Directory where the .gcda files will be collected
 gcda_dir="$working_folder/coverage_gcda_files/application_run"
+cov_dir="$working_folder/coverage_processed"
+
 rm -rf "$gcda_dir"
+rm -rf "$cov_dir"
+
 mkdir -p "$gcda_dir"
 
 current_folder=$(pwd)
@@ -45,7 +49,7 @@ for queueFolder in "$fuzzQueueDir"/*; do
   rm -rf "$gcda_dir"
   mkdir -p "$gcda_dir"
 
-  for testcaseFile in "$queueFolder"/*; do
+  for testcaseFile in "$queueFolder"/default/queue/*; do
     compiler_flag=""$opt" -lm"
     export GCOV_PREFIX="$gcda_dir"
     ## Compile the test-case
