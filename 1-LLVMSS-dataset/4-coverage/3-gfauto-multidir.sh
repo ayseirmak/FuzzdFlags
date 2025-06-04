@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
-fuzzDir="$1"
-if [ -z "$fuzzDir" ]; then
-  echo "Usage: $0 /path/to/fuzzDir"
+fuzzQueueDir="$1"
+if [ -z "$fuzzQueueDir" ]; then
+  echo "Usage: $0 /path/to/fuzzQueueDir"
   exit 1
 fi
 working_folder=$2 # "/users/user42/coverage/llvm-clang-1"
@@ -14,7 +14,7 @@ old_version=0     # use 0 for new gfauto style
 
 compiler_build="llvm-build"  # path to the compiler
 configuration_location="$working_folder/compiler_test.in"  # configuration file containing the compiler command
-compile_line_lib_default="-c -o /dev/null -fpermissive -w -Wno-implicit-function-declaration -Wno-return-type -Wno-builtin-redeclared -Wno-implicit-int -Wno-int-conversion -march=x86-64-v2 -I/usr/include -I/users/user42/llvmSS-include"
+compile_line_lib_default="-fpermissive -w -Wno-implicit-function-declaration -Wno-return-type -Wno-builtin-redeclared -Wno-implicit-int -Wno-int-conversion -march=native -I/usr/include -I/users/user42/llvmSS-include"
 
 # Get compiler command from the configuration file (first line)
 compilerInfo=$(head -1 "$configuration_location")
@@ -25,16 +25,14 @@ fi
 
 # Directory where the .gcda files will be collected
 gcda_dir="$working_folder/coverage_gcda_files/application_run"
-coverage_processed_dir="$working_folder/coverage_processed"
 rm -rf "$gcda_dir"
-rm -rf "$coverage_processed_dir"
 mkdir -p "$gcda_dir"
 
 current_folder=$(pwd)
 
 # Process each fuzz queue file
-for queueFolder in "$fuzzDir"/fuzz*; do  
-  repetition=$(basename "$queueFolder")     # e.g., fuzz01
+for queueFolder in "$fuzzQueueDir"/*; do
+  repetition=$(basename "$queueFolder")     # e.g., m1-fuzz01-queue
   echo "=== PROCESSING: $repetition ==="
   
   # Create separate coverage result directories for this repetition:
@@ -47,7 +45,7 @@ for queueFolder in "$fuzzDir"/fuzz*; do
   rm -rf "$gcda_dir"
   mkdir -p "$gcda_dir"
 
-  for testcaseFile in "$queueFolder"/default/queue/*; do
+  for testcaseFile in "$queueFolder"/*; do
     compiler_flag=""$opt" -lm"
     export GCOV_PREFIX="$gcda_dir"
     ## Compile the test-case
