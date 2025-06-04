@@ -33,28 +33,28 @@ wget https://github.com/ayseirmak/FuzzdFlags/releases/download/v1.0-alpha/llvmSS
 tar -zxvf llvmSS-reindex-after-Cmin.tar.gz
 
 mkdir -p /users/user42/fuzzdflags-1-seed
-mkdir -p /users/user42/fuzzdfalgs-10-seed
+mkdir -p /users/user42/fuzzdflags-30-seed
 
-# I need to add fuzzdflags 1 seed queue here (wget)
+wget https://github.com/ayseirmak/FuzzdFlags/releases/download/v5.0/exp21-fuzzdflags-1seed-queue.tar.gz
 tar -zxvf exp21-fuzzdflags-1seed-queue.tar.gz --strip-components=1 -C /users/user42/fuzzdflags-1-seed
-# I need to fuzzdflags 10 seed queue here (wget)
-tar -zxvf exp22-fuzzdflags-10seed-queue.tar.gz --strip-components=1 -C /users/user42/fuzzdfalgs-10-seed
+wget https://github.com/ayseirmak/FuzzdFlags/releases/download/v5.0/exp22-fuzzdflags-30seed-queue.tar.gz
+tar -zxvf exp22-fuzzdflags-30seed-queue.tar.gz --strip-components=1 -C /users/user42/fuzzdflags-30-seed
 
-mkdir -p coverage-measurment
-cd coverage-measurment
-mkdir -p fuzzdflags-cov/fuzzdflags-1seed-cov fuzzdflags-cov/fuzzdflags-10seed-cov
+mkdir -p coverage-measurement
+cd coverage-measurement
+mkdir -p fuzzdflags-cov/fuzzdflags-1seed-cov fuzzdflags-cov/fuzzdflags-30seed-cov
 cd ~
 
-cd /users/user42/coverage-measurment/fuzzdflags-cov/fuzzdflags-1seed-cov
+cd /users/user42/coverage-measurement/fuzzdflags-cov/fuzzdflags-1seed-cov
 nohup /users/user42/3-gfauto-fuzzdflags.sh /users/user42/fuzzdflags-1-seed /users/user42/coverage/llvm-clang-1 > exp21-fuzzDflags-1seed-cov.log 2>&1 &
 
-cd /users/user42/coverage-measurment/fuzzdflags-cov/fuzzdflags-10seed-cov
-nohup /users/user42/3-gfauto-fuzzdflags.sh /users/user42/fuzzdfalgs-10-seed /users/user42/coverage/llvm-clang-2 > exp22-fuzzDflags-10seed-cov.log 2>&1 &
+cd /users/user42/coverage-measurement/fuzzdflags-cov/fuzzdflags-30seed-cov
+nohup /users/user42/3-gfauto-fuzzdflags.sh /users/user42/fuzzdflags-30-seed /users/user42/coverage/llvm-clang-2 > exp22-fuzzdflags-30seed-cov.log 2>&1 &
 
 cd ~
-nohup /users/user42/4-cov-analysis-multidir.sh ~/coverage-measurment/fuzzdflags-cov/fuzzdflags-1seed-cov /users/user42/coverage/llvm-clang-1 table_line_cov_1seed.csv > cov-mes-fuzzdflag-1seed.log 2>&1 &
-nohup /users/user42/4-cov-analysis-multidir.sh ~/coverage-measurment/fuzzdflags-cov/fuzzdflags-10seed-cov /users/user42/coverage/llvm-clang-2 table_line_cov_10seed.csv > cov-mes-fuzzdflag-10seed.log 2>&1 &
+nohup /users/user42/4-cov-analysis-multidir.sh ~/coverage-measurement/fuzzdflags-cov/fuzzdflags-1seed-cov /users/user42/coverage/llvm-clang-1 table_line_cov_1seed.csv > cov-mes-fuzzdflag-1seed.log 2>&1 &
+nohup /users/user42/4-cov-analysis-multidir.sh ~/coverage-measurement/fuzzdflags-cov/fuzzdflags-30seed-cov /users/user42/coverage/llvm-clang-2 table_line_cov_10seed.csv > cov-mes-fuzzdflag-10seed.log 2>&1 &
 
-tar -czvf fuzzdflags-cov-analysis.tar.gz -C /users/user42/coverage-measurment/ fuzzdflags-cov
+tar -czvf fuzzdflags-cov-analysis.tar.gz -C /users/user42/coverage-measurement/ fuzzdflags-cov
 tar -czvf cov-fuzzdflags-1seed-result.tar.gz -C /users/user42/coverage/llvm-clang-1 coverage_processed coverage_gcda_files
-tar -czvf cov-fuzzdflags-10seed-result.tar.gz -C /users/user42/coverage/llvm-clang-2 coverage_processed coverage_gcda_files
+tar -czvf cov-fuzzdflags-30seed-result.tar.gz -C /users/user42/coverage/llvm-clang-2 coverage_processed coverage_gcda_files
