@@ -133,3 +133,4 @@ mkdir -p exp21-fuzzdflags-1seed-queue
 ./decrypt_queue.sh fuzz04/default/queue/ exp21-fuzzdflags-1seed-queue/fuzz04-queue
 ./decrypt_queue.sh fuzz05/default/queue/ exp21-fuzzdflags-1seed-queue/fuzz05-queue
 tar -czvf exp21-fuzzdflags-1seed-queue.tar.gz -C /users/user42 exp21-fuzzdflags-1seed-queue
+tar -czvf exp21-fuzzdflags-results.tar.gz -C /users/user42/ fuzz01 fuzz02 fuzz03 fuzz04 fuzz05
