@@ -133,3 +133,4 @@ mkdir -p exp22-fuzzdflags-30seed-queue
 ./decrypt_queue.sh fuzz04/default/queue/ exp22-fuzzdflags-30seed-queue/fuzz04-queue
 ./decrypt_queue.sh fuzz05/default/queue/ exp22-fuzzdflags-30seed-queue/fuzz05-queue
 tar -czvf exp22-fuzzdflags-30seed-queue.tar.gz -C /users/user42 exp22-fuzzdflags-30seed-queue
+tar -czvf exp22-fuzzdflags-results.tar.gz -C /users/user42/ fuzz01 fuzz02 fuzz03 fuzz04 fuzz05
