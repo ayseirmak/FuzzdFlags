@@ -1,9 +1,6 @@
 # FuzzdFlags
 ![image](https://github.com/user-attachments/assets/6639b6bb-14f8-4140-bb85-064f742d8109)
 
-# FuzzdFlags
-![image](https://github.com/user-attachments/assets/6639b6bb-14f8-4140-bb85-064f742d8109)
-
 ### Fast LLVM-based instrumentation for afl-fuzz
 
 1. Instrumented with use `afl-clang-fast/afl-clang-fast++` 
