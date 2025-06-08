@@ -108,10 +108,10 @@ std::vector<uint8_t> readBinaryFile(const std::string &filename) {
 std::string decodeFlagsFromBinarySub(const std::vector<uint8_t> &data) {
     std::string flags;
     // Skip first 2 bytes for file index, flags start from the 3rd byte
-   for(size_t f=0;f<ENUM_TBL.size();++f){
+   for(size_t f=0;f<ENUM_TABLE.size();++f){
         size_t idxByte = f + 2;                 // skip first 2 bytes
         if(idxByte >= data.size()) break;
-        const auto& tab = ENUM_TBL[f];
+        const auto& tab = ENUM_TABLE[f];
         const char* opt = tab[data[idxByte] % tab.size()];
         if(opt && *opt){ flags += ' '; flags += opt; }
     }
