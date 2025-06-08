@@ -90,7 +90,7 @@ su user42
 # --------------------------------------------------
 
 mkdir -p llvm-latest
-cd llvm-lates
+cd llvm-latest
 git clone https://github.com/llvm/llvm-project.git
 mkdir llvm-trunk-build && cd llvm-trunk-build
 
@@ -109,11 +109,11 @@ ninja -j "$(nproc)"
 # --------------------------------------------------
 # Step 5: Clang-19-build
 # --------------------------------------------------
-mkdir -p llvm-19-build
-cd llvm-19-build
+mkdir -p llvm-19
+cd llvm-19
+git clone https://github.com/llvm/llvm-project.git
 git checkout release/19.x
 mkdir llvm-19-build && cd llvm-19-build
-
 AFL_USE_ASAN=0 cmake -G Ninja -Wall ../llvm-project/llvm/ \
 -DCMAKE_BUILD_TYPE=Release \
 -DLLVM_ENABLE_PROJECTS="clang;lld;clang-tools-extra" \
@@ -129,11 +129,11 @@ ninja -j "$(nproc)"
 # --------------------------------------------------
 # Step 5: Clang-20-build
 # --------------------------------------------------
-mkdir -p llvm-20-build
-cd llvm-20-build
+mkdir -p llvm-20
+cd llvm-20
+git clone https://github.com/llvm/llvm-project.git
 git checkout release/20.x
 mkdir llvm-20-build && cd llvm-20-build
-
 AFL_USE_ASAN=0 cmake -G Ninja -Wall ../llvm-project/llvm/ \
 -DCMAKE_BUILD_TYPE=Release \
 -DLLVM_ENABLE_PROJECTS="clang;lld;clang-tools-extra" \
