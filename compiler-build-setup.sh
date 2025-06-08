@@ -114,6 +114,7 @@ cd llvm-19
 git clone https://github.com/llvm/llvm-project.git
 cd llvm-project
 git checkout release/19.x
+cd ..
 mkdir llvm-19-build && cd llvm-19-build
 AFL_USE_ASAN=0 cmake -G Ninja -Wall ../llvm-project/llvm/ \
 -DCMAKE_BUILD_TYPE=Release \
@@ -135,6 +136,7 @@ cd llvm-20
 git clone https://github.com/llvm/llvm-project.git
 cd llvm-project
 git checkout release/20.x
+cd ..
 mkdir llvm-20-build && cd llvm-20-build
 AFL_USE_ASAN=0 cmake -G Ninja -Wall ../llvm-project/llvm/ \
 -DCMAKE_BUILD_TYPE=Release \
