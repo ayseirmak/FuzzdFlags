@@ -112,6 +112,7 @@ ninja -j "$(nproc)"
 mkdir -p llvm-19
 cd llvm-19
 git clone https://github.com/llvm/llvm-project.git
+cd llvm-project
 git checkout release/19.x
 mkdir llvm-19-build && cd llvm-19-build
 AFL_USE_ASAN=0 cmake -G Ninja -Wall ../llvm-project/llvm/ \
@@ -132,6 +133,7 @@ ninja -j "$(nproc)"
 mkdir -p llvm-20
 cd llvm-20
 git clone https://github.com/llvm/llvm-project.git
+cd llvm-project
 git checkout release/20.x
 mkdir llvm-20-build && cd llvm-20-build
 AFL_USE_ASAN=0 cmake -G Ninja -Wall ../llvm-project/llvm/ \
