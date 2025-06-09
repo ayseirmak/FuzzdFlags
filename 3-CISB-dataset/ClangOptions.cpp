@@ -232,7 +232,7 @@ std::string decodeFlagsFromBinary(const std::vector<uint8_t> &data) {
 }
 
 std::string generateTestFileName(const std::vector<uint8_t> &data) {
-    std::string testFilesDir = getEnvOrDefault("CFILES_DIR", "/users/user42/llvmSS-reindex-cfiles");
+    std::string testFilesDir = getEnvOrDefault("CFILES_DIR", "/users/user42/cisb_dataset");
     // If fewer than 1 byte, fallback to "hello.c"
     if (data.size() < 1) {
         return testFilesDir + "/test_1.c";
