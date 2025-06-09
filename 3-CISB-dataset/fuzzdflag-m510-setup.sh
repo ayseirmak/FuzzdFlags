@@ -103,7 +103,7 @@ cd ~
 # Step 7: Get CISB DATASET
 # -------------------------------------------------------
 wget https://github.com/ayseirmak/FuzzdFlags/raw/refs/heads/main/3-CISB-dataset/cisb-programs.tar.gz 
-tar -zxvf cisb-programs.tar.gz.tar.gz
+tar -zxvf cisb-programs.tar.gz
 # -------------------------------------------------------
 # Step 8: Build clang-options
 # -------------------------------------------------------
@@ -147,7 +147,7 @@ cd ~
 wget https://raw.githubusercontent.com/ayseirmak/FuzzdFlags/refs/heads/main/1-LLVMSS-dataset/24_fuzz.sh
 wget https://raw.githubusercontent.com/ayseirmak/FuzzdFlags/refs/heads/main/1-LLVMSS-dataset/decrypt_queue.sh
 wget https://raw.githubusercontent.com/ayseirmak/FuzzdFlags/refs/heads/main/1-LLVMSS-dataset/2-fuzzdflags-options/run_AFL_conf_clangopt.sh
-chmod +x *.sh 
+sudo chmod +x *.sh 
 rm *.tar.gz
 # -------------------------------------------------------
 # Setp10: Set environment variables for instrumented clang and C files directory
@@ -158,8 +158,10 @@ export FILE_COUNT=34
 # -------------------------------------------------------
 # Step 11: Get Fuzzing input binary seeds
 # -------------------------------------------------------
-wget https://github.com/ayseirmak/FuzzdFlags/raw/refs/heads/main/1-LLVMSS-dataset/2-fuzzdflags-options/2-fuzzdflags-30seed/exp22-input-seeds-30.tar.gz
-tar -zxvf exp22-input-seeds-30.tar.gz
+ mkdir -p input-seeds && \
+    cd input-seeds && \
+    echo -ne "\x01\x84" > seed.bin && \
+    cd ~
 # -------------------------------------------------------
 # Step 12: Set Ownership and Permissions
 # -------------------------------------------------------
