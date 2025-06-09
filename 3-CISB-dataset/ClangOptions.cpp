@@ -190,11 +190,7 @@ static std::string getFixedFlags() {
         "-Wno-implicit-int -Wno-int-conversion "
         "-march=x86-64-v2 "
         "-I/usr/include";
-
-    // Let INCLUDES_DIR override the second -I path
-    //  fallback = "/users/user42/llvmSS-include"
-    std::string includesDir = getEnvOrDefault("INCLUDES_DIR", "/users/user42/llvmSS-include");
-    baseFlags += " -I" + includesDir;
+    
     baseFlags += " -lm";
     return baseFlags;
 }
