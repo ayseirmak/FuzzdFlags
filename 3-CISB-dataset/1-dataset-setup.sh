@@ -119,5 +119,5 @@ while read -r file; do
     ((i++))
 done
 
-tar -czvf csib-programs.tar.gz -C /users/user42/CISB_dataset/ cisb-dataset
+tar -czvf cisb-programs.tar.gz -C /users/user42/CISB_dataset/ cisb-dataset
 
