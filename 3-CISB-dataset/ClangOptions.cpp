@@ -219,7 +219,7 @@ std::vector<uint8_t> readBinaryFile(const std::string &filename) {
 
 std::string decodeFlagsFromBinarySub(const std::vector<uint8_t> &data) {
     std::string flags;
-    // Skip first 1 bytes for file index, flags start from the 3rd byte
+    // Skip first 1 bytes for file index, flags start from the 2nd byte
     for (size_t i = 1; i < data.size(); i++) {
         std::string flagSet = decodeByteToFlags(data[i]);
         if (!flagSet.empty()) {
@@ -246,7 +246,7 @@ std::string generateTestFileName(const std::vector<uint8_t> &data) {
     uint8_t rawValue = 0;
     rawValue |= static_cast<uint8_t>(data[0]) << 0;
 
-    uint8_t fileCount = getEnvOrDefaultInt("FILE_COUNT", 34);    
+    uint16_t fileCount = getEnvOrDefaultInt("FILE_COUNT", 34);    
     uint8_t fileIndex = rawValue % fileCount;
 
     // Construct filename (e.g. test_1234.c)
